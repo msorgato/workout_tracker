@@ -8,13 +8,13 @@
 
 ## 2. Setup Firebase
 
-- [ ] 2.1 Creare progetto Firebase (piano Spark) e abilitare Authentication (provider Google) e Firestore — **richiede azione manuale utente**, vedi nota sotto
+- [x] 2.1 Creare progetto Firebase (piano Spark) e abilitare Authentication (provider Google) e Firestore
 - [x] 2.2 Configurare l'SDK Firebase web nel frontend (`firebase.ts` con inizializzazione app/auth/firestore)
-- [ ] 2.3 Restringere l'API key Firebase su Google Cloud Console alle sole API Firebase necessarie — **richiede azione manuale utente**, dipende da 2.1
+- [x] 2.3 Restringere l'API key Firebase su Google Cloud Console alle sole API Firebase necessarie
 - [x] 2.4 Scrivere le Firestore Security Rules: lettura/scrittura su `users/{uid}/**` consentita solo se `request.auth.uid == uid`
 - [x] 2.5 Verificare le security rules con l'emulatore Firestore o i test delle regole
 
-> **Nota**: 2.1 e 2.3 richiedono di creare/configurare risorse reali su un account Google (Firebase console / Google Cloud Console) e sono state saltate su richiesta esplicita per procedere con il resto dell'implementazione. Il codice (`src/lib/firebase.ts`, `.env.example`) è già pronto per ricevere i valori di config reali una volta creato il progetto.
+> **Nota**: progetto Firebase reale `workout-tracker-afe8b` creato e configurato dall'utente; API key ristretta su Google Cloud Console.
 
 ## 3. Autenticazione (capability: auth)
 
@@ -65,14 +65,14 @@
 
 ## 9. CI/CD e deploy
 
-- [ ] 9.1 Eseguire `firebase init hosting:github` per generare i workflow GitHub Actions — **richiede azione manuale utente**, dipende da 2.1 (progetto Firebase reale) e da autenticazione GitHub interattiva
+- [x] 9.1 Eseguire `firebase init hosting:github` per generare i workflow GitHub Actions
 - [ ] 9.2 Verificare il workflow di deploy automatico su push a `main` — dipende da 9.1
 - [ ] 9.3 Verificare il workflow di preview deploy sulle pull request — dipende da 9.1
 - [x] 9.4 Documentare nel README il processo di setup locale e deploy
 
 ## 10. Verifica finale
 
-- [ ] 10.1 Percorrere manualmente lo scenario end-to-end: login → creazione routine → avvio sessione da routine → logging serie con timer → chiusura sessione → consultazione storico — **richiede progetto Firebase reale** (dipende da 2.1)
-- [ ] 10.2 Percorrere manualmente lo scenario sessione libera senza routine con aggiunta esercizio custom — dipende da 2.1
+- [x] 10.1 Percorrere manualmente lo scenario end-to-end: login → creazione routine → avvio sessione da routine → logging serie con timer → chiusura sessione → consultazione storico
+- [ ] 10.2 Percorrere manualmente lo scenario sessione libera senza routine con aggiunta esercizio custom
 - [x] 10.3 Verificare che nessuna funzionalità richieda Cloud Functions o Cloud Storage (compatibilità piano Spark)
 - [ ] 10.4 Verificare il comportamento su un dispositivo mobile reale (responsive, suono/vibrazione del timer) — richiede dispositivo fisico
