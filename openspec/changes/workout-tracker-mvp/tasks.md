@@ -66,8 +66,8 @@
 ## 9. CI/CD e deploy
 
 - [x] 9.1 Eseguire `firebase init hosting:github` per generare i workflow GitHub Actions
-- [ ] 9.2 Verificare il workflow di deploy automatico su push a `main` — dipende da 9.1
-- [ ] 9.3 Verificare il workflow di preview deploy sulle pull request — dipende da 9.1
+- [x] 9.2 Verificare il workflow di deploy automatico su push a `main`
+- [x] 9.3 Verificare il workflow di preview deploy sulle pull request
 - [x] 9.4 Documentare nel README il processo di setup locale e deploy
 
 ## 10. Verifica finale
