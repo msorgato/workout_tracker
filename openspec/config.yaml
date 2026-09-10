@@ -1,0 +1,62 @@
+schema: spec-driven
+
+context: |
+  Workout Tracker — personal single-user workout logging web app.
+
+  Tech stack:
+  - Frontend: React + Vite + TypeScript
+  - Styling: Tailwind CSS
+  - Backend-as-a-Service: Firebase — Authentication (Google sign-in) + Firestore only.
+    No Cloud Functions, no Cloud Storage.
+  - Firebase plan: Spark (free tier) — the whole project must stay within free quotas
+    (Firestore 1 GiB / 50k reads-day / 20k writes-day; Auth up to 50k MAU;
+    Hosting 10 GB storage / 360 MB-day transfer).
+  - Hosting: Firebase Hosting, default `*.web.app` domain.
+  - Version control: GitHub, public repository (no secrets to protect — Firebase web
+    config is not sensitive by design; real authorization is via Firestore Security Rules).
+  - CI/CD: GitHub Actions via official Firebase integration (`firebase init hosting:github`) —
+    auto-deploy on push to `main`, preview deploy per pull request.
+
+  Scope/constraints:
+  - Single user (owner-only Google login), no multi-tenant logic.
+  - Online-only, responsive web (mobile + desktop). No PWA/offline in this version.
+  - Historical log only — no charts, 1RM estimation, auto PRs, or progression suggestions
+    (deferred to a future version).
+  - No user photo/image uploads (would require Cloud Storage, unavailable on Spark plan).
+  - UI icons/images are static assets bundled in the build, served by Firebase Hosting.
+
+  Data model (Firestore), everything scoped under users/{uid}:
+  - users/{uid}/routines/{routineId}: name, exercises[] (exerciseId, exerciseName,
+    targetSets, targetReps, targetRestSeconds, order), createdAt, updatedAt.
+  - users/{uid}/sessions/{sessionId}: startedAt, endedAt, routineId? (optional ref),
+    routineName? (denormalized), notes?, exercises[] (exerciseId, exerciseName, order,
+    sets[] { setNumber, weight, reps, restSeconds, completedAt }).
+    Exercises and sets are nested in the session document — no subcollections
+    (single user, no cross-session aggregation needed).
+  - users/{uid}/customExercises/{exerciseId}: name, muscleGroup?, createdAt.
+  - Predefined exercise library is a static JSON in the frontend, merged at runtime
+    with customExercises for autocomplete.
+
+  Non-functional requirements:
+  - Security: Firestore Security Rules allow read/write on users/{uid}/** only if
+    request.auth.uid == uid. Firebase API key restricted in Google Cloud Console to
+    only the required Firebase APIs.
+  - Cost: the whole app must stay on the Spark (free) plan — no feature requiring
+    Blaze (Cloud Functions, Cloud Storage) in this version.
+  - Repository: public on GitHub, automated deploy via GitHub Actions.
+
+  Out of scope for now (possible future versions):
+  - Multi-user / data sharing.
+  - Offline mode / installable PWA.
+  - Charts, statistics, 1RM estimation, auto PRs, load progression suggestions.
+  - User photo/image upload (requires Cloud Storage for Firebase → Blaze plan).
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always include a "Non-goals" section
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
