@@ -1,0 +1,19 @@
+[
+  { "id": "panca-piana", "name": "Panca piana", "muscleGroup": "Petto" },
+  { "id": "panca-inclinata", "name": "Panca inclinata", "muscleGroup": "Petto" },
+  { "id": "croci-manubri", "name": "Croci con manubri", "muscleGroup": "Petto" },
+  { "id": "squat", "name": "Squat", "muscleGroup": "Gambe" },
+  { "id": "leg-press", "name": "Leg press", "muscleGroup": "Gambe" },
+  { "id": "affondi", "name": "Affondi", "muscleGroup": "Gambe" },
+  { "id": "stacco-da-terra", "name": "Stacco da terra", "muscleGroup": "Schiena" },
+  { "id": "lat-machine", "name": "Lat machine", "muscleGroup": "Schiena" },
+  { "id": "rematore-bilanciere", "name": "Rematore con bilanciere", "muscleGroup": "Schiena" },
+  { "id": "trazioni", "name": "Trazioni alla sbarra", "muscleGroup": "Schiena" },
+  { "id": "military-press", "name": "Military press", "muscleGroup": "Spalle" },
+  { "id": "alzate-laterali", "name": "Alzate laterali", "muscleGroup": "Spalle" },
+  { "id": "curl-bicipiti", "name": "Curl bicipiti con bilanciere", "muscleGroup": "Braccia" },
+  { "id": "french-press", "name": "French press", "muscleGroup": "Braccia" },
+  { "id": "dip-tricipiti", "name": "Dip su parallele", "muscleGroup": "Braccia" },
+  { "id": "plank", "name": "Plank", "muscleGroup": "Core" },
+  { "id": "crunch", "name": "Crunch", "muscleGroup": "Core" }
+]
