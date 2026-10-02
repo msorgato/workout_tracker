@@ -37,6 +37,7 @@ export interface SessionExercise {
   exerciseName: string
   order: number
   sets: SessionSet[]
+  targetRestSeconds?: number
 }
 
 export interface Session {

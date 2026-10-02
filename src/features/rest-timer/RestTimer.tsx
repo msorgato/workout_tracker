@@ -27,7 +27,7 @@ export function RestTimer({ targetSeconds, onFinish }: RestTimerProps) {
         })
 
         if (typeof navigator.vibrate === 'function') {
-          navigator.vibrate(400)
+          navigator.vibrate([300, 100, 300])
         }
 
         onFinishRef.current()

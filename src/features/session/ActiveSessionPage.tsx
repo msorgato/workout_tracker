@@ -8,8 +8,11 @@ interface ActiveSessionPageProps {
   onDone: () => void
 }
 
+const DEFAULT_REST_SECONDS = 90
+
 export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
-  const { session, addExercise, completeSet, updateNotes, finishSession } = useSession()
+  const { session, addExercise, completeSet, updateExerciseRestSeconds, updateNotes, finishSession } =
+    useSession()
   const [restFor, setRestFor] = useState<{ exerciseIndex: number; seconds: number } | null>(null)
   const [weightInputs, setWeightInputs] = useState<Record<number, string>>({})
   const [repsInputs, setRepsInputs] = useState<Record<number, string>>({})
@@ -18,11 +21,11 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
     return <p className="text-sm text-gray-500">Nessuna sessione attiva.</p>
   }
 
-  async function handleCompleteSet(exerciseIndex: number, defaultRestSeconds: number) {
+  async function handleCompleteSet(exerciseIndex: number, restSeconds: number) {
     const weight = Number(weightInputs[exerciseIndex] ?? 0)
     const reps = Number(repsInputs[exerciseIndex] ?? 0)
-    await completeSet(exerciseIndex, { weight, reps, restSeconds: defaultRestSeconds })
-    setRestFor({ exerciseIndex, seconds: defaultRestSeconds })
+    await completeSet(exerciseIndex, { weight, reps, restSeconds })
+    setRestFor({ exerciseIndex, seconds: restSeconds })
   }
 
   async function handleFinish() {
@@ -80,9 +83,23 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
                 }
                 className="w-20 rounded border border-gray-300 px-2 py-1 text-sm"
               />
+              <label className="flex items-center gap-1 text-xs text-gray-500">
+                Recupero (s)
+                <input
+                  type="number"
+                  min={0}
+                  value={exercise.targetRestSeconds ?? DEFAULT_REST_SECONDS}
+                  onChange={(event) =>
+                    updateExerciseRestSeconds(index, Number(event.target.value))
+                  }
+                  className="w-16 rounded border border-gray-300 px-2 py-1"
+                />
+              </label>
               <button
                 type="button"
-                onClick={() => handleCompleteSet(index, 90)}
+                onClick={() =>
+                  handleCompleteSet(index, exercise.targetRestSeconds ?? DEFAULT_REST_SECONDS)
+                }
                 className="rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white"
               >
                 Serie completata
