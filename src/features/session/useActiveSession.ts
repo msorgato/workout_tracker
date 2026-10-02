@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Routine, Session, SessionExercise } from '../../lib/types'
 import {
   createFreeSession,
@@ -12,27 +12,29 @@ import {
 export function useActiveSession(uid: string | undefined) {
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+  // Incrementato ad ogni richiesta che può aggiornare `session` (caricamento
+  // iniziale, avvio esplicito di una sessione), così una risposta arrivata in
+  // ritardo non sovrascrive mai una sessione avviata nel frattempo dall'utente.
+  const sessionVersionRef = useRef(0)
 
   useEffect(() => {
     if (!uid) {
       setLoading(false)
       return
     }
-    let cancelled = false
+    const requestVersion = ++sessionVersionRef.current
     findActiveSession(uid).then((active) => {
-      if (!cancelled) {
+      if (sessionVersionRef.current === requestVersion) {
         setSession(active)
         setLoading(false)
       }
     })
-    return () => {
-      cancelled = true
-    }
   }, [uid])
 
   const startFromRoutine = useCallback(
     async (routine: Routine) => {
       if (!uid) throw new Error('Utente non autenticato')
+      sessionVersionRef.current++
       const created = await createSessionFromRoutine(uid, routine)
       setSession(created)
       return created
@@ -42,6 +44,7 @@ export function useActiveSession(uid: string | undefined) {
 
   const startFree = useCallback(async () => {
     if (!uid) throw new Error('Utente non autenticato')
+    sessionVersionRef.current++
     const created = await createFreeSession(uid)
     setSession(created)
     return created

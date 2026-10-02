@@ -10,17 +10,23 @@ export function RestTimer({ targetSeconds, onFinish }: RestTimerProps) {
   const [remaining, setRemaining] = useState(targetSeconds)
   const onFinishRef = useRef(onFinish)
   const finishedRef = useRef(false)
+  // Scadenza assoluta (non un contatore a scalare): un setTimeout/setInterval
+  // viene fortemente rallentato o sospeso quando la tab è in background o lo
+  // schermo è bloccato. Calcolare il tempo restante da Date.now() ad ogni tick
+  // — e soprattutto al rientro in foreground (`visibilitychange`) — permette
+  // di recuperare suono e vibrazione subito quando l'utente torna sulla tab,
+  // anche se il countdown sarebbe già scaduto nel frattempo.
+  const deadlineRef = useRef(Date.now() + targetSeconds * 1000)
   onFinishRef.current = onFinish
 
   useEffect(() => {
-    setRemaining(targetSeconds)
-    finishedRef.current = false
-  }, [targetSeconds])
-
-  useEffect(() => {
-    if (remaining <= 0) {
-      if (!finishedRef.current) {
+    function tick() {
+      if (finishedRef.current) return
+      const secondsLeft = Math.ceil((deadlineRef.current - Date.now()) / 1000)
+      if (secondsLeft <= 0) {
         finishedRef.current = true
+        setRemaining(0)
+
         const audio = new Audio(restCompleteSound)
         audio.play().catch(() => {
           // Autoplay può essere bloccato dal browser prima di un'interazione utente: non bloccante.
@@ -31,13 +37,18 @@ export function RestTimer({ targetSeconds, onFinish }: RestTimerProps) {
         }
 
         onFinishRef.current()
+      } else {
+        setRemaining(secondsLeft)
       }
-      return
     }
 
-    const timeout = setTimeout(() => setRemaining((current) => current - 1), 1000)
-    return () => clearTimeout(timeout)
-  }, [remaining])
+    const interval = setInterval(tick, 1000)
+    document.addEventListener('visibilitychange', tick)
+    return () => {
+      clearInterval(interval)
+      document.removeEventListener('visibilitychange', tick)
+    }
+  }, [])
 
   function handleSkip() {
     finishedRef.current = true
