@@ -57,6 +57,7 @@ export function useActiveSession(uid: string | undefined) {
           exerciseName: exercise.name,
           order: session.exercises.length,
           sets: [],
+          targetRestSeconds: 90,
         },
       ]
       setSession({ ...session, exercises: nextExercises })
@@ -90,6 +91,18 @@ export function useActiveSession(uid: string | undefined) {
     [uid, session],
   )
 
+  const updateExerciseRestSeconds = useCallback(
+    async (exerciseIndex: number, targetRestSeconds: number) => {
+      if (!uid || !session) return
+      const nextExercises = session.exercises.map((exercise, index) =>
+        index === exerciseIndex ? { ...exercise, targetRestSeconds } : exercise,
+      )
+      setSession({ ...session, exercises: nextExercises })
+      await saveSessionExercises(uid, session.id, nextExercises)
+    },
+    [uid, session],
+  )
+
   const updateNotes = useCallback(
     async (notes: string) => {
       if (!uid || !session) return
@@ -112,6 +125,7 @@ export function useActiveSession(uid: string | undefined) {
     startFree,
     addExercise,
     completeSet,
+    updateExerciseRestSeconds,
     updateNotes,
     finishSession,
   }
