@@ -11,6 +11,7 @@ export interface RoutineExercise {
   targetSets: number
   targetReps: number
   targetRestSeconds: number
+  targetWeight?: number
   order: number
 }
 
@@ -38,6 +39,7 @@ export interface SessionExercise {
   order: number
   sets: SessionSet[]
   targetRestSeconds?: number
+  targetWeight?: number
 }
 
 export interface Session {

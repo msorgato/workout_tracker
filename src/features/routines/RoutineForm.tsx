@@ -120,6 +120,20 @@ export function RoutineForm({ uid, initialRoutine, onSave, onCancel }: RoutineFo
               />
             </label>
             <label className="text-xs text-gray-500">
+              Carico (kg)
+              <input
+                type="number"
+                min={0}
+                value={exercise.targetWeight ?? ''}
+                onChange={(event) =>
+                  updateExercise(index, {
+                    targetWeight: event.target.value ? Number(event.target.value) : undefined,
+                  })
+                }
+                className="ml-1 w-16 rounded border border-gray-300 px-1 py-0.5"
+              />
+            </label>
+            <label className="text-xs text-gray-500">
               Recupero (s)
               <input
                 type="number"

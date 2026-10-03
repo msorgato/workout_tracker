@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import type { Routine, RoutineInput } from '../../lib/types'
+import type { Routine, RoutineExercise, RoutineInput } from '../../lib/types'
 import { useSession } from '../session/SessionContext'
+import { RoutineCsvImport } from './RoutineCsvImport'
 import { RoutineForm } from './RoutineForm'
 import { RoutineList } from './RoutineList'
 import { useRoutines } from './useRoutines'
@@ -10,7 +11,13 @@ export function RoutinesPage({ uid }: { uid: string }) {
   const { routines, loading, addRoutine, editRoutine, removeRoutine } = useRoutines(uid)
   const { startFromRoutine, startFree } = useSession()
   const [editingRoutine, setEditingRoutine] = useState<Routine | 'new' | null>(null)
+  const [importingCsv, setImportingCsv] = useState(false)
   const navigate = useNavigate()
+
+  async function handleImportCsv(name: string, exercises: RoutineExercise[]) {
+    await addRoutine({ name, exercises })
+    setImportingCsv(false)
+  }
 
   async function handleSave(input: RoutineInput) {
     if (editingRoutine && editingRoutine !== 'new') {
@@ -31,6 +38,16 @@ export function RoutinesPage({ uid }: { uid: string }) {
     navigate('/session')
   }
 
+  if (importingCsv) {
+    return (
+      <RoutineCsvImport
+        uid={uid}
+        onImport={handleImportCsv}
+        onCancel={() => setImportingCsv(false)}
+      />
+    )
+  }
+
   if (editingRoutine) {
     return (
       <RoutineForm
@@ -44,13 +61,22 @@ export function RoutinesPage({ uid }: { uid: string }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <button
-        type="button"
-        onClick={handleStartFreeSession}
-        className="self-start rounded-md border border-gray-300 px-3 py-1.5 text-sm"
-      >
-        Avvia sessione libera
-      </button>
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={handleStartFreeSession}
+          className="self-start rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+        >
+          Avvia sessione libera
+        </button>
+        <button
+          type="button"
+          onClick={() => setImportingCsv(true)}
+          className="self-start rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+        >
+          Importa da CSV
+        </button>
+      </div>
       <RoutineList
         routines={routines}
         loading={loading}
