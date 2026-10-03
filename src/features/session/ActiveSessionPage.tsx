@@ -22,7 +22,8 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
   }
 
   async function handleCompleteSet(exerciseIndex: number, restSeconds: number) {
-    const weight = Number(weightInputs[exerciseIndex] ?? 0)
+    const targetWeight = session!.exercises[exerciseIndex]?.targetWeight
+    const weight = Number(weightInputs[exerciseIndex] ?? targetWeight ?? 0)
     const reps = Number(repsInputs[exerciseIndex] ?? 0)
     await completeSet(exerciseIndex, { weight, reps, restSeconds })
     setRestFor({ exerciseIndex, seconds: restSeconds })
@@ -68,7 +69,7 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
               <input
                 type="number"
                 placeholder="Peso (kg)"
-                value={weightInputs[index] ?? ''}
+                value={weightInputs[index] ?? (exercise.targetWeight?.toString() ?? '')}
                 onChange={(event) =>
                   setWeightInputs((current) => ({ ...current, [index]: event.target.value }))
                 }

@@ -40,6 +40,7 @@ export async function createSessionFromRoutine(uid: string, routine: Routine): P
       order: exercise.order,
       sets: [],
       targetRestSeconds: exercise.targetRestSeconds,
+      targetWeight: exercise.targetWeight,
     }))
 
   const docRef = await addDoc(sessionsCollection(uid), {
