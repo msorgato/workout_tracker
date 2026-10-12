@@ -10,7 +10,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "preview": "vite preview",
-    "test:rules": "firebase emulators:exec --only firestore --project demo-workout-tracker \"vitest run tests/firestore.rules.test.ts\""
+    "test:rules": "firebase emulators:exec --only firestore --project demo-workout-tracker \"vitest run tests/firestore.rules.test.ts tests/routineImport.integration.test.ts\"",
+    "test:unit": "vitest run tests/csvImport.real.test.ts"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
