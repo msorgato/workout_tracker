@@ -32,7 +32,26 @@ VITE_FIREBASE_APP_ID=
 - `npm run preview` — anteprima locale della build
 - `npm run lint` — lint con oxlint
 - `npm run format` / `npm run format:check` — formattazione con Prettier
-- `npm run test:rules` — verifica le Firestore Security Rules sull'emulatore (richiede Java)
+- `npm run test:unit` — test puri (nessuna dipendenza da Firebase, es. parsing CSV)
+- `npm run test:rules` — security rules + test di integrazione Firestore sull'emulatore (richiede Java)
+
+## Sviluppo locale contro gli emulatori Firebase
+
+Per lavorare senza toccare il progetto Firebase reale (es. mentre si prova import/sessioni):
+
+```bash
+firebase emulators:start --only auth,firestore --project demo-workout-tracker
+```
+
+In un altro terminale, con `VITE_USE_FIREBASE_EMULATORS=true` in `.env.local` (oltre ai valori
+in `.env`, anche fittizi va bene per i soli emulatori):
+
+```bash
+npm run dev
+```
+
+L'app si collega agli emulatori invece che al progetto reale; il login Google apre l'account
+chooser fittizio dell'Auth Emulator invece del vero OAuth Google.
 
 ## Setup Firebase (una tantum)
 
@@ -46,11 +65,12 @@ VITE_FIREBASE_APP_ID=
 
 ## Deploy e CI/CD
 
-Il deploy usa Firebase Hosting con i workflow ufficiali generati da
-`firebase init hosting:github` (richiede repo GitHub collegata e progetto Firebase creati):
+Il deploy usa Firebase Hosting con i workflow GitHub Actions generati da
+`firebase init hosting:github` (`.github/workflows/firebase-hosting-*.yml`):
 
 - push su `main` → deploy automatico in produzione
 - ogni pull request → preview deploy temporaneo
 
-Questi workflow non sono ancora stati generati in questo repository: vanno creati eseguendo
-`firebase init hosting:github` una volta completato il setup del progetto Firebase (vedi sopra).
+La build in CI legge la config Firebase da GitHub Actions Variables (Settings → Secrets and
+variables → Actions → Variables), non da secrets: la Firebase web config non è sensibile per
+design (vedi `workout-tracker-spec.md`).

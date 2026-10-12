@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app'
-import { GoogleAuthProvider, getAuth } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
+import { GoogleAuthProvider, connectAuthEmulator, getAuth } from 'firebase/auth'
+import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -15,3 +15,10 @@ export const app = initializeApp(firebaseConfig)
 export const auth = getAuth(app)
 export const db = getFirestore(app)
 export const googleProvider = new GoogleAuthProvider()
+
+// Opt-in local development against the Firebase emulators (never active in
+// production builds): `VITE_USE_FIREBASE_EMULATORS=true npm run dev`.
+if (import.meta.env.VITE_USE_FIREBASE_EMULATORS === 'true') {
+  connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true })
+  connectFirestoreEmulator(db, 'localhost', 8080)
+}
