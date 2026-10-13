@@ -26,48 +26,48 @@ export function RoutineList({
   }
 
   if (loading) {
-    return <p className="text-sm text-gray-500">Caricamento routine...</p>
+    return <p className="text-sm text-text-muted">Caricamento routine...</p>
   }
 
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">Le tue routine</h2>
+        <h2 className="text-lg font-semibold text-text">Le tue routine</h2>
         <button
           type="button"
           onClick={onCreateNew}
-          className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+          className="rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-contrast hover:bg-accent-hover"
         >
           Nuova routine
         </button>
       </div>
 
       {routines.length === 0 && (
-        <p className="text-sm text-gray-500">Non hai ancora creato nessuna routine.</p>
+        <p className="text-sm text-text-muted">Non hai ancora creato nessuna routine.</p>
       )}
 
       <ul className="flex flex-col gap-2">
         {routines.map((routine) => (
           <li
             key={routine.id}
-            className="flex items-center justify-between rounded-md border border-gray-200 p-3"
+            className="flex items-center justify-between rounded-md border border-border bg-surface p-3"
           >
             <div>
-              <p className="font-medium text-gray-900">{routine.name}</p>
-              <p className="text-xs text-gray-500">{routine.exercises.length} esercizi</p>
+              <p className="font-medium text-text">{routine.name}</p>
+              <p className="text-xs text-text-muted">{routine.exercises.length} esercizi</p>
             </div>
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => onStartSession(routine)}
-                className="rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700"
+                className="rounded-md bg-accent px-3 py-1.5 text-xs font-medium text-accent-contrast hover:bg-accent-hover"
               >
                 Avvia sessione
               </button>
               <button
                 type="button"
                 onClick={() => onEdit(routine)}
-                className="rounded-md border border-gray-300 px-3 py-1.5 text-xs"
+                className="rounded-md border border-border px-3 py-1.5 text-xs text-text hover:bg-surface-hover"
               >
                 Modifica
               </button>
@@ -75,7 +75,7 @@ export function RoutineList({
                 <button
                   type="button"
                   onClick={() => confirmDelete(routine.id)}
-                  className="rounded-md bg-red-600 px-3 py-1.5 text-xs font-medium text-white"
+                  className="rounded-md bg-danger px-3 py-1.5 text-xs font-medium text-white hover:bg-danger-hover"
                 >
                   Conferma eliminazione
                 </button>
@@ -83,7 +83,7 @@ export function RoutineList({
                 <button
                   type="button"
                   onClick={() => setPendingDeleteId(routine.id)}
-                  className="rounded-md border border-red-300 px-3 py-1.5 text-xs text-red-600"
+                  className="rounded-md border border-danger px-3 py-1.5 text-xs text-danger"
                 >
                   Elimina
                 </button>

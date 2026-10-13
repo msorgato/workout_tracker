@@ -18,7 +18,7 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
   const [repsInputs, setRepsInputs] = useState<Record<number, string>>({})
 
   if (!session) {
-    return <p className="text-sm text-gray-500">Nessuna sessione attiva.</p>
+    return <p className="text-sm text-text-muted">Nessuna sessione attiva.</p>
   }
 
   async function handleCompleteSet(exerciseIndex: number, restSeconds: number) {
@@ -37,13 +37,13 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-lg font-semibold text-text">
           {session.routineName ?? 'Sessione libera'}
         </h2>
         <button
           type="button"
           onClick={handleFinish}
-          className="rounded-md bg-gray-900 px-3 py-1.5 text-sm font-medium text-white"
+          className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm font-medium text-text hover:bg-surface-hover"
         >
           Termina sessione
         </button>
@@ -53,11 +53,11 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
         {session.exercises.map((exercise, index) => (
           <li
             key={`${exercise.exerciseId}-${index}`}
-            className="rounded-md border border-gray-200 p-3"
+            className="rounded-md border border-border bg-surface p-3"
           >
-            <p className="mb-2 font-medium text-gray-900">{exercise.exerciseName}</p>
+            <p className="mb-2 font-medium text-text">{exercise.exerciseName}</p>
 
-            <ul className="mb-2 flex flex-col gap-1 text-sm text-gray-600">
+            <ul className="mb-2 flex flex-col gap-1 text-sm text-text-muted">
               {exercise.sets.map((set) => (
                 <li key={set.setNumber}>
                   Serie {set.setNumber}: {set.weight}kg × {set.reps} reps
@@ -73,7 +73,7 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
                 onChange={(event) =>
                   setWeightInputs((current) => ({ ...current, [index]: event.target.value }))
                 }
-                className="w-24 rounded border border-gray-300 px-2 py-1 text-sm"
+                className="w-24 rounded border border-border bg-bg px-2 py-1 text-sm text-text"
               />
               <input
                 type="number"
@@ -82,9 +82,9 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
                 onChange={(event) =>
                   setRepsInputs((current) => ({ ...current, [index]: event.target.value }))
                 }
-                className="w-20 rounded border border-gray-300 px-2 py-1 text-sm"
+                className="w-20 rounded border border-border bg-bg px-2 py-1 text-sm text-text"
               />
-              <label className="flex items-center gap-1 text-xs text-gray-500">
+              <label className="flex items-center gap-1 text-xs text-text-muted">
                 Recupero (s)
                 <input
                   type="number"
@@ -93,7 +93,7 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
                   onChange={(event) =>
                     updateExerciseRestSeconds(index, Number(event.target.value))
                   }
-                  className="w-16 rounded border border-gray-300 px-2 py-1"
+                  className="w-16 rounded border border-border bg-bg px-2 py-1 text-text"
                 />
               </label>
               <button
@@ -101,7 +101,7 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
                 onClick={() =>
                   handleCompleteSet(index, exercise.targetRestSeconds ?? DEFAULT_REST_SECONDS)
                 }
-                className="rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white"
+                className="rounded-md bg-accent px-3 py-1.5 text-xs font-medium text-accent-contrast hover:bg-accent-hover"
               >
                 Serie completata
               </button>
@@ -121,16 +121,16 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
       </ul>
 
       <div>
-        <p className="mb-1 text-sm font-medium text-gray-700">Aggiungi esercizio</p>
+        <p className="mb-1 text-sm font-medium text-text-muted">Aggiungi esercizio</p>
         <ExerciseAutocomplete uid={uid} onSelect={addExercise} />
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">Note</label>
+        <label className="mb-1 block text-sm font-medium text-text-muted">Note</label>
         <textarea
           value={session.notes ?? ''}
           onChange={(event) => updateNotes(event.target.value)}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-text"
           rows={2}
         />
       </div>

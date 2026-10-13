@@ -85,28 +85,28 @@ export function RoutineCsvImport({ uid, onImport, onCancel }: RoutineCsvImportPr
 
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold text-gray-900">Importa routine da CSV</h2>
+      <h2 className="text-lg font-semibold text-text">Importa routine da CSV</h2>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">File CSV</label>
+        <label className="mb-1 block text-sm font-medium text-text-muted">File CSV</label>
         <input
           type="file"
           accept=".csv,text/csv"
           onChange={handleFileChange}
-          className="block w-full text-sm"
+          className="block w-full text-sm text-text"
         />
-        {parseError && <p className="mt-1 text-sm text-red-600">{parseError}</p>}
+        {parseError && <p className="mt-1 text-sm text-danger">{parseError}</p>}
       </div>
 
       {rows && (
         <>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Nome routine</label>
+            <label className="mb-1 block text-sm font-medium text-text-muted">Nome routine</label>
             <input
               type="text"
               value={routineName}
               onChange={(event) => setRoutineName(event.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-text"
             />
           </div>
 
@@ -114,17 +114,17 @@ export function RoutineCsvImport({ uid, onImport, onCancel }: RoutineCsvImportPr
             {rows.map((row, index) => (
               <li
                 key={index}
-                className={`flex flex-wrap items-center gap-2 rounded-md border p-2 ${
-                  row.isValid ? 'border-gray-200' : 'border-red-300 bg-red-50'
+                className={`flex flex-wrap items-center gap-2 rounded-md border bg-surface p-2 ${
+                  row.isValid ? 'border-border' : 'border-danger bg-danger/10'
                 }`}
               >
                 <input
                   type="text"
                   value={row.exerciseName}
                   onChange={(event) => updateRow(index, { exerciseName: event.target.value })}
-                  className="min-w-[160px] flex-1 rounded border border-gray-300 px-2 py-1 text-sm"
+                  className="min-w-[160px] flex-1 rounded border border-border bg-bg px-2 py-1 text-sm text-text"
                 />
-                <label className="text-xs text-gray-500">
+                <label className="text-xs text-text-muted">
                   Serie
                   <input
                     type="number"
@@ -133,10 +133,10 @@ export function RoutineCsvImport({ uid, onImport, onCancel }: RoutineCsvImportPr
                     onChange={(event) =>
                       updateRow(index, { targetSets: Number(event.target.value) })
                     }
-                    className="ml-1 w-14 rounded border border-gray-300 px-1 py-0.5"
+                    className="ml-1 w-14 rounded border border-border bg-bg px-1 py-0.5 text-text"
                   />
                 </label>
-                <label className="text-xs text-gray-500">
+                <label className="text-xs text-text-muted">
                   Reps
                   <input
                     type="number"
@@ -145,10 +145,10 @@ export function RoutineCsvImport({ uid, onImport, onCancel }: RoutineCsvImportPr
                     onChange={(event) =>
                       updateRow(index, { targetReps: Number(event.target.value) })
                     }
-                    className="ml-1 w-14 rounded border border-gray-300 px-1 py-0.5"
+                    className="ml-1 w-14 rounded border border-border bg-bg px-1 py-0.5 text-text"
                   />
                 </label>
-                <label className="text-xs text-gray-500">
+                <label className="text-xs text-text-muted">
                   Carico (kg)
                   <input
                     type="number"
@@ -159,10 +159,10 @@ export function RoutineCsvImport({ uid, onImport, onCancel }: RoutineCsvImportPr
                         targetWeight: event.target.value ? Number(event.target.value) : undefined,
                       })
                     }
-                    className="ml-1 w-16 rounded border border-gray-300 px-1 py-0.5"
+                    className="ml-1 w-16 rounded border border-border bg-bg px-1 py-0.5 text-text"
                   />
                 </label>
-                <label className="text-xs text-gray-500">
+                <label className="text-xs text-text-muted">
                   Recupero (s)
                   <input
                     type="number"
@@ -171,23 +171,23 @@ export function RoutineCsvImport({ uid, onImport, onCancel }: RoutineCsvImportPr
                     onChange={(event) =>
                       updateRow(index, { targetRestSeconds: Number(event.target.value) })
                     }
-                    className="ml-1 w-16 rounded border border-gray-300 px-1 py-0.5"
+                    className="ml-1 w-16 rounded border border-border bg-bg px-1 py-0.5 text-text"
                   />
                 </label>
                 <button
                   type="button"
                   onClick={() => removeRow(index)}
-                  className="rounded border border-red-300 px-2 py-0.5 text-xs text-red-600"
+                  className="rounded border border-danger px-2 py-0.5 text-xs text-danger"
                 >
                   Rimuovi
                 </button>
-                {row.error && <p className="w-full text-xs text-red-600">{row.error}</p>}
+                {row.error && <p className="w-full text-xs text-danger">{row.error}</p>}
               </li>
             ))}
           </ul>
 
           {hasInvalidRows && (
-            <p className="text-sm text-red-600">
+            <p className="text-sm text-danger">
               Correggi o rimuovi le righe segnalate prima di confermare.
             </p>
           )}
@@ -199,14 +199,14 @@ export function RoutineCsvImport({ uid, onImport, onCancel }: RoutineCsvImportPr
           type="button"
           onClick={handleConfirm}
           disabled={!rows || rows.length === 0 || hasInvalidRows || importing}
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+          className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-contrast hover:bg-accent-hover disabled:opacity-50"
         >
           Conferma e crea routine
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700"
+          className="rounded-md border border-border px-4 py-2 text-sm font-medium text-text hover:bg-surface-hover"
         >
           Annulla
         </button>

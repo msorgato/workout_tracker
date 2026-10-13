@@ -9,10 +9,10 @@ import { SessionProvider } from './features/session/SessionContext'
 function NavBar() {
   const { logout } = useAuth()
   const linkClass = ({ isActive }: { isActive: boolean }) =>
-    `px-3 py-2 text-sm font-medium ${isActive ? 'text-blue-700' : 'text-gray-600 hover:text-gray-900'}`
+    `px-3 py-2 text-sm font-medium ${isActive ? 'text-accent' : 'text-text-muted hover:text-text'}`
 
   return (
-    <nav className="flex items-center justify-between border-b border-gray-200 px-4 py-2">
+    <nav className="flex items-center justify-between border-b border-border px-4 py-2">
       <div className="flex gap-1">
         <NavLink to="/routines" className={linkClass}>
           Routine
@@ -24,7 +24,7 @@ function NavBar() {
           Storico
         </NavLink>
       </div>
-      <button type="button" onClick={logout} className="text-sm text-gray-500 hover:text-gray-800">
+      <button type="button" onClick={logout} className="text-sm text-text-muted hover:text-text">
         Esci
       </button>
     </nav>
@@ -53,7 +53,7 @@ function App() {
   return (
     <RouteGuard>
       <SessionProvider>
-        <div className="mx-auto min-h-screen max-w-2xl bg-white">
+        <div className="mx-auto min-h-screen max-w-2xl bg-bg text-text">
           <NavBar />
           <main className="p-4">
             <AppRoutes />
