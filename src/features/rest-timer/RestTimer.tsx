@@ -57,15 +57,15 @@ export function RestTimer({ targetSeconds, onFinish }: RestTimerProps) {
   }
 
   return (
-    <div className="flex items-center gap-3 rounded-md border border-blue-200 bg-blue-50 px-4 py-2">
-      <span className="text-2xl font-semibold tabular-nums text-blue-700">
+    <div className="flex items-center gap-3 rounded-md border border-accent/40 bg-accent/10 px-4 py-2">
+      <span className="text-2xl font-semibold tabular-nums text-accent">
         {Math.max(0, remaining)}s
       </span>
-      <span className="text-sm text-blue-600">Recupero</span>
+      <span className="text-sm text-accent">Recupero</span>
       <button
         type="button"
         onClick={handleSkip}
-        className="ml-auto rounded-md border border-blue-300 px-3 py-1 text-xs font-medium text-blue-700"
+        className="ml-auto rounded-md border border-accent/50 px-3 py-1 text-xs font-medium text-accent"
       >
         Salta
       </button>

@@ -52,20 +52,20 @@ export function ExerciseAutocomplete({
         }}
         onFocus={() => setIsOpen(true)}
         onBlur={() => setTimeout(() => setIsOpen(false), 150)}
-        className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+        className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-text focus:border-accent focus:outline-none"
       />
       {isOpen && query.trim() && (
-        <ul className="absolute z-10 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-lg">
+        <ul className="absolute z-10 mt-1 w-full rounded-md border border-border bg-surface shadow-lg">
           {matches.map((option) => (
             <li key={option.id}>
               <button
                 type="button"
                 onMouseDown={() => handleSelect(option)}
-                className="flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-gray-100"
+                className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-text hover:bg-surface-hover"
               >
                 <span>{option.name}</span>
                 {option.muscleGroup && (
-                  <span className="text-xs text-gray-400">{option.muscleGroup}</span>
+                  <span className="text-xs text-text-muted">{option.muscleGroup}</span>
                 )}
               </button>
             </li>
@@ -75,7 +75,7 @@ export function ExerciseAutocomplete({
               <button
                 type="button"
                 onMouseDown={handleCreateCustom}
-                className="w-full px-3 py-2 text-left text-sm text-blue-600 hover:bg-gray-100"
+                className="w-full px-3 py-2 text-left text-sm text-accent hover:bg-surface-hover"
               >
                 + Crea esercizio "{query.trim()}"
               </button>

@@ -65,14 +65,14 @@ export function RoutinesPage({ uid }: { uid: string }) {
         <button
           type="button"
           onClick={handleStartFreeSession}
-          className="self-start rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+          className="self-start rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-text hover:bg-surface-hover"
         >
           Avvia sessione libera
         </button>
         <button
           type="button"
           onClick={() => setImportingCsv(true)}
-          className="self-start rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+          className="self-start rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-text hover:bg-surface-hover"
         >
           Importa da CSV
         </button>

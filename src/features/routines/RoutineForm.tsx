@@ -70,19 +70,19 @@ export function RoutineForm({ uid, initialRoutine, onSave, onCancel }: RoutineFo
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">Nome routine</label>
+        <label className="mb-1 block text-sm font-medium text-text-muted">Nome routine</label>
         <input
           type="text"
           value={name}
           onChange={(event) => setName(event.target.value)}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-text"
           placeholder="Es. Push day"
         />
-        {nameError && <p className="mt-1 text-sm text-red-600">{nameError}</p>}
+        {nameError && <p className="mt-1 text-sm text-danger">{nameError}</p>}
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">Aggiungi esercizio</label>
+        <label className="mb-1 block text-sm font-medium text-text-muted">Aggiungi esercizio</label>
         <ExerciseAutocomplete uid={uid} onSelect={addExercise} />
       </div>
 
@@ -90,12 +90,12 @@ export function RoutineForm({ uid, initialRoutine, onSave, onCancel }: RoutineFo
         {exercises.map((exercise, index) => (
           <li
             key={`${exercise.exerciseId}-${index}`}
-            className="flex flex-wrap items-center gap-2 rounded-md border border-gray-200 p-2"
+            className="flex flex-wrap items-center gap-2 rounded-md border border-border bg-surface p-2"
           >
-            <span className="min-w-[120px] flex-1 text-sm font-medium">
+            <span className="min-w-[120px] flex-1 text-sm font-medium text-text">
               {exercise.exerciseName}
             </span>
-            <label className="text-xs text-gray-500">
+            <label className="text-xs text-text-muted">
               Serie
               <input
                 type="number"
@@ -104,10 +104,10 @@ export function RoutineForm({ uid, initialRoutine, onSave, onCancel }: RoutineFo
                 onChange={(event) =>
                   updateExercise(index, { targetSets: Number(event.target.value) })
                 }
-                className="ml-1 w-14 rounded border border-gray-300 px-1 py-0.5"
+                className="ml-1 w-14 rounded border border-border bg-bg px-1 py-0.5 text-text"
               />
             </label>
-            <label className="text-xs text-gray-500">
+            <label className="text-xs text-text-muted">
               Reps
               <input
                 type="number"
@@ -116,10 +116,10 @@ export function RoutineForm({ uid, initialRoutine, onSave, onCancel }: RoutineFo
                 onChange={(event) =>
                   updateExercise(index, { targetReps: Number(event.target.value) })
                 }
-                className="ml-1 w-14 rounded border border-gray-300 px-1 py-0.5"
+                className="ml-1 w-14 rounded border border-border bg-bg px-1 py-0.5 text-text"
               />
             </label>
-            <label className="text-xs text-gray-500">
+            <label className="text-xs text-text-muted">
               Carico (kg)
               <input
                 type="number"
@@ -130,10 +130,10 @@ export function RoutineForm({ uid, initialRoutine, onSave, onCancel }: RoutineFo
                     targetWeight: event.target.value ? Number(event.target.value) : undefined,
                   })
                 }
-                className="ml-1 w-16 rounded border border-gray-300 px-1 py-0.5"
+                className="ml-1 w-16 rounded border border-border bg-bg px-1 py-0.5 text-text"
               />
             </label>
-            <label className="text-xs text-gray-500">
+            <label className="text-xs text-text-muted">
               Recupero (s)
               <input
                 type="number"
@@ -142,7 +142,7 @@ export function RoutineForm({ uid, initialRoutine, onSave, onCancel }: RoutineFo
                 onChange={(event) =>
                   updateExercise(index, { targetRestSeconds: Number(event.target.value) })
                 }
-                className="ml-1 w-16 rounded border border-gray-300 px-1 py-0.5"
+                className="ml-1 w-16 rounded border border-border bg-bg px-1 py-0.5 text-text"
               />
             </label>
             <div className="flex gap-1">
@@ -150,7 +150,7 @@ export function RoutineForm({ uid, initialRoutine, onSave, onCancel }: RoutineFo
                 type="button"
                 onClick={() => moveExercise(index, -1)}
                 disabled={index === 0}
-                className="rounded border border-gray-300 px-2 py-0.5 text-xs disabled:opacity-30"
+                className="rounded border border-border px-2 py-0.5 text-xs text-text disabled:opacity-30"
               >
                 ↑
               </button>
@@ -158,14 +158,14 @@ export function RoutineForm({ uid, initialRoutine, onSave, onCancel }: RoutineFo
                 type="button"
                 onClick={() => moveExercise(index, 1)}
                 disabled={index === exercises.length - 1}
-                className="rounded border border-gray-300 px-2 py-0.5 text-xs disabled:opacity-30"
+                className="rounded border border-border px-2 py-0.5 text-xs text-text disabled:opacity-30"
               >
                 ↓
               </button>
               <button
                 type="button"
                 onClick={() => removeExercise(index)}
-                className="rounded border border-red-300 px-2 py-0.5 text-xs text-red-600"
+                className="rounded border border-danger px-2 py-0.5 text-xs text-danger"
               >
                 Rimuovi
               </button>
@@ -178,14 +178,14 @@ export function RoutineForm({ uid, initialRoutine, onSave, onCancel }: RoutineFo
         <button
           type="submit"
           disabled={saving}
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+          className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-contrast hover:bg-accent-hover disabled:opacity-50"
         >
           Salva routine
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700"
+          className="rounded-md border border-border px-4 py-2 text-sm font-medium text-text hover:bg-surface-hover"
         >
           Annulla
         </button>
