@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
+import { Button } from '../../components/ui/Button'
 import restCompleteSound from '../../assets/sounds/rest-complete.wav'
 
 interface RestTimerProps {
   targetSeconds: number
+  exerciseName?: string
   onFinish: () => void
 }
 
-export function RestTimer({ targetSeconds, onFinish }: RestTimerProps) {
+export function RestTimer({ targetSeconds, exerciseName, onFinish }: RestTimerProps) {
   const [remaining, setRemaining] = useState(targetSeconds)
   const onFinishRef = useRef(onFinish)
   const finishedRef = useRef(false)
@@ -56,19 +58,45 @@ export function RestTimer({ targetSeconds, onFinish }: RestTimerProps) {
     onFinishRef.current()
   }
 
+  const radius = 22
+  const circumference = 2 * Math.PI * radius
+  const progress = targetSeconds > 0 ? Math.min(1, Math.max(0, remaining / targetSeconds)) : 0
+
   return (
-    <div className="flex items-center gap-3 rounded-md border border-accent/40 bg-accent/10 px-4 py-2">
-      <span className="text-2xl font-semibold tabular-nums text-accent">
-        {Math.max(0, remaining)}s
-      </span>
-      <span className="text-sm text-accent">Recupero</span>
-      <button
-        type="button"
-        onClick={handleSkip}
-        className="ml-auto rounded-md border border-accent/50 px-3 py-1 text-xs font-medium text-accent"
-      >
-        Salta
-      </button>
+    <div className="flex animate-fade-up items-center gap-3 rounded-card border border-accent/50 bg-surface-raised/95 px-4 py-3 shadow-glow backdrop-blur">
+      <div className="relative size-14 shrink-0">
+        <svg viewBox="0 0 56 56" className="size-14 -rotate-90" aria-hidden="true">
+          <circle
+            cx="28"
+            cy="28"
+            r={radius}
+            fill="none"
+            strokeWidth="4"
+            className="stroke-border"
+          />
+          <circle
+            cx="28"
+            cy="28"
+            r={radius}
+            fill="none"
+            strokeWidth="4"
+            strokeLinecap="round"
+            className="stroke-accent transition-[stroke-dashoffset] duration-1000 ease-linear"
+            strokeDasharray={circumference}
+            strokeDashoffset={circumference * (1 - progress)}
+          />
+        </svg>
+        <span className="absolute inset-0 flex items-center justify-center font-display text-xl font-bold tabular-nums text-accent">
+          {Math.max(0, remaining)}
+        </span>
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="font-display text-xl font-bold uppercase leading-none tracking-wide text-accent">
+          Recupero
+        </p>
+        {exerciseName && <p className="truncate text-sm text-text-muted">{exerciseName}</p>}
+      </div>
+      <Button onClick={handleSkip}>Salta</Button>
     </div>
   )
 }

@@ -1,4 +1,8 @@
 import { useState } from 'react'
+import { Button, IconButton } from '../../components/ui/Button'
+import { Card } from '../../components/ui/Card'
+import { NumberField, TextField, inputClass } from '../../components/ui/fields'
+import { PageHeader } from '../../components/ui/PageHeader'
 import type { ExerciseOption, RoutineExercise } from '../../lib/types'
 import { useExerciseLibrary } from '../exercise-library/useExerciseLibrary'
 import {
@@ -85,103 +89,94 @@ export function RoutineCsvImport({ uid, onImport, onCancel }: RoutineCsvImportPr
 
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold text-text">Importa routine da CSV</h2>
+      <PageHeader
+        title="Importa CSV"
+        showLogout={false}
+        actions={<IconButton icon="x" label="Annulla" onClick={onCancel} />}
+      />
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-text-muted">File CSV</label>
+        <span className="mb-1 block text-xs font-medium uppercase tracking-wider text-text-muted">
+          File CSV
+        </span>
         <input
           type="file"
           accept=".csv,text/csv"
           onChange={handleFileChange}
-          className="block w-full text-sm text-text"
+          className="block w-full rounded-xl border border-dashed border-border bg-surface p-3 text-sm text-text file:mr-3 file:min-h-11 file:rounded-lg file:border-0 file:bg-accent file:px-3 file:font-semibold file:text-accent-contrast"
         />
         {parseError && <p className="mt-1 text-sm text-danger">{parseError}</p>}
       </div>
 
       {rows && (
         <>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-text-muted">Nome routine</label>
-            <input
-              type="text"
-              value={routineName}
-              onChange={(event) => setRoutineName(event.target.value)}
-              className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-text"
-            />
-          </div>
+          <TextField
+            label="Nome routine"
+            value={routineName}
+            onChange={(event) => setRoutineName(event.target.value)}
+          />
 
-          <ul className="flex flex-col gap-2">
+          <ul className="flex flex-col gap-3">
             {rows.map((row, index) => (
-              <li
-                key={index}
-                className={`flex flex-wrap items-center gap-2 rounded-md border bg-surface p-2 ${
-                  row.isValid ? 'border-border' : 'border-danger bg-danger/10'
-                }`}
-              >
-                <input
-                  type="text"
-                  value={row.exerciseName}
-                  onChange={(event) => updateRow(index, { exerciseName: event.target.value })}
-                  className="min-w-[160px] flex-1 rounded border border-border bg-bg px-2 py-1 text-sm text-text"
-                />
-                <label className="text-xs text-text-muted">
-                  Serie
-                  <input
-                    type="number"
-                    min={1}
-                    value={row.targetSets}
-                    onChange={(event) =>
-                      updateRow(index, { targetSets: Number(event.target.value) })
-                    }
-                    className="ml-1 w-14 rounded border border-border bg-bg px-1 py-0.5 text-text"
-                  />
-                </label>
-                <label className="text-xs text-text-muted">
-                  Reps
-                  <input
-                    type="number"
-                    min={1}
-                    value={row.targetReps}
-                    onChange={(event) =>
-                      updateRow(index, { targetReps: Number(event.target.value) })
-                    }
-                    className="ml-1 w-14 rounded border border-border bg-bg px-1 py-0.5 text-text"
-                  />
-                </label>
-                <label className="text-xs text-text-muted">
-                  Carico (kg)
-                  <input
-                    type="number"
-                    min={0}
-                    value={row.targetWeight ?? ''}
-                    onChange={(event) =>
-                      updateRow(index, {
-                        targetWeight: event.target.value ? Number(event.target.value) : undefined,
-                      })
-                    }
-                    className="ml-1 w-16 rounded border border-border bg-bg px-1 py-0.5 text-text"
-                  />
-                </label>
-                <label className="text-xs text-text-muted">
-                  Recupero (s)
-                  <input
-                    type="number"
-                    min={0}
-                    value={row.targetRestSeconds}
-                    onChange={(event) =>
-                      updateRow(index, { targetRestSeconds: Number(event.target.value) })
-                    }
-                    className="ml-1 w-16 rounded border border-border bg-bg px-1 py-0.5 text-text"
-                  />
-                </label>
-                <button
-                  type="button"
-                  onClick={() => removeRow(index)}
-                  className="rounded border border-danger px-2 py-0.5 text-xs text-danger"
+              <li key={index}>
+                <Card
+                  className={`flex flex-col gap-3 p-3 ${
+                    row.isValid ? '' : 'border-danger bg-danger/10'
+                  }`}
                 >
-                  Rimuovi
-                </button>
-                {row.error && <p className="w-full text-xs text-danger">{row.error}</p>}
+                  <div className="flex items-center gap-1">
+                    <input
+                      type="text"
+                      aria-label="Nome esercizio"
+                      value={row.exerciseName}
+                      onChange={(event) => updateRow(index, { exerciseName: event.target.value })}
+                      className={`${inputClass} flex-1`}
+                    />
+                    <IconButton
+                      icon="trash"
+                      label="Rimuovi riga"
+                      variant="danger-outline"
+                      onClick={() => removeRow(index)}
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <NumberField
+                      label="Serie"
+                      min={1}
+                      value={row.targetSets}
+                      onChange={(event) =>
+                        updateRow(index, { targetSets: Number(event.target.value) })
+                      }
+                    />
+                    <NumberField
+                      label="Reps"
+                      min={1}
+                      value={row.targetReps}
+                      onChange={(event) =>
+                        updateRow(index, { targetReps: Number(event.target.value) })
+                      }
+                    />
+                    <NumberField
+                      label="Carico (kg)"
+                      min={0}
+                      value={row.targetWeight ?? ''}
+                      onChange={(event) =>
+                        updateRow(index, {
+                          targetWeight: event.target.value ? Number(event.target.value) : undefined,
+                        })
+                      }
+                    />
+                    <NumberField
+                      label="Recupero (s)"
+                      min={0}
+                      value={row.targetRestSeconds}
+                      onChange={(event) =>
+                        updateRow(index, { targetRestSeconds: Number(event.target.value) })
+                      }
+                    />
+                  </div>
+                  {row.error && <p className="text-xs text-danger">{row.error}</p>}
+                </Card>
               </li>
             ))}
           </ul>
@@ -195,21 +190,18 @@ export function RoutineCsvImport({ uid, onImport, onCancel }: RoutineCsvImportPr
       )}
 
       <div className="flex gap-2">
-        <button
-          type="button"
+        <Button
+          variant="primary"
+          size="lg"
+          fullWidth
           onClick={handleConfirm}
           disabled={!rows || rows.length === 0 || hasInvalidRows || importing}
-          className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-contrast hover:bg-accent-hover disabled:opacity-50"
         >
           Conferma e crea routine
-        </button>
-        <button
-          type="button"
-          onClick={onCancel}
-          className="rounded-md border border-border px-4 py-2 text-sm font-medium text-text hover:bg-surface-hover"
-        >
+        </Button>
+        <Button size="lg" onClick={onCancel}>
           Annulla
-        </button>
+        </Button>
       </div>
     </div>
   )

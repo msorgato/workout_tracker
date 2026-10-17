@@ -7,7 +7,8 @@ export function RouteGuard({ children }: { children: ReactNode }) {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-bg text-sm text-text-muted">
+      <div className="flex min-h-dvh flex-col items-center justify-center gap-3 bg-bg text-sm text-text-muted">
+        <span className="size-3 animate-pulse-dot rounded-full bg-accent shadow-glow" />
         Caricamento...
       </div>
     )

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useExerciseLibrary } from '../features/exercise-library/useExerciseLibrary'
 import type { ExerciseOption } from '../lib/types'
+import { inputClass } from './ui/fields'
 
 interface ExerciseAutocompleteProps {
   uid: string | undefined
@@ -52,16 +53,16 @@ export function ExerciseAutocomplete({
         }}
         onFocus={() => setIsOpen(true)}
         onBlur={() => setTimeout(() => setIsOpen(false), 150)}
-        className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-text focus:border-accent focus:outline-none"
+        className={inputClass}
       />
       {isOpen && query.trim() && (
-        <ul className="absolute z-10 mt-1 w-full rounded-md border border-border bg-surface shadow-lg">
+        <ul className="absolute z-10 mt-1 w-full overflow-hidden rounded-xl border border-border bg-surface-raised shadow-card">
           {matches.map((option) => (
             <li key={option.id}>
               <button
                 type="button"
                 onMouseDown={() => handleSelect(option)}
-                className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-text hover:bg-surface-hover"
+                className="flex w-full items-center justify-between min-h-11 px-3 py-2 text-left text-sm text-text hover:bg-surface-hover"
               >
                 <span>{option.name}</span>
                 {option.muscleGroup && (
@@ -75,7 +76,7 @@ export function ExerciseAutocomplete({
               <button
                 type="button"
                 onMouseDown={handleCreateCustom}
-                className="w-full px-3 py-2 text-left text-sm text-accent hover:bg-surface-hover"
+                className="min-h-11 w-full px-3 py-2 text-left text-sm text-accent hover:bg-surface-hover"
               >
                 + Crea esercizio "{query.trim()}"
               </button>
