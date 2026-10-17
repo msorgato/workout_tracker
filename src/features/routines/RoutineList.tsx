@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import { Button, IconButton } from '../../components/ui/Button'
+import { Card } from '../../components/ui/Card'
+import { EmptyState } from '../../components/ui/EmptyState'
 import type { Routine } from '../../lib/types'
 
 interface RoutineListProps {
@@ -29,69 +32,68 @@ export function RoutineList({
     return <p className="text-sm text-text-muted">Caricamento routine...</p>
   }
 
+  if (routines.length === 0) {
+    return (
+      <EmptyState icon="list" message="Non hai ancora creato nessuna routine.">
+        <Button variant="primary" icon="plus" onClick={onCreateNew}>
+          Crea la prima routine
+        </Button>
+      </EmptyState>
+    )
+  }
+
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-text">Le tue routine</h2>
-        <button
-          type="button"
-          onClick={onCreateNew}
-          className="rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-contrast hover:bg-accent-hover"
-        >
-          Nuova routine
-        </button>
-      </div>
-
-      {routines.length === 0 && (
-        <p className="text-sm text-text-muted">Non hai ancora creato nessuna routine.</p>
-      )}
-
-      <ul className="flex flex-col gap-2">
-        {routines.map((routine) => (
-          <li
-            key={routine.id}
-            className="flex items-center justify-between rounded-md border border-border bg-surface p-3"
-          >
-            <div>
-              <p className="font-medium text-text">{routine.name}</p>
-              <p className="text-xs text-text-muted">{routine.exercises.length} esercizi</p>
-            </div>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => onStartSession(routine)}
-                className="rounded-md bg-accent px-3 py-1.5 text-xs font-medium text-accent-contrast hover:bg-accent-hover"
-              >
-                Avvia sessione
-              </button>
-              <button
-                type="button"
-                onClick={() => onEdit(routine)}
-                className="rounded-md border border-border px-3 py-1.5 text-xs text-text hover:bg-surface-hover"
-              >
-                Modifica
-              </button>
-              {pendingDeleteId === routine.id ? (
-                <button
-                  type="button"
-                  onClick={() => confirmDelete(routine.id)}
-                  className="rounded-md bg-danger px-3 py-1.5 text-xs font-medium text-white hover:bg-danger-hover"
-                >
-                  Conferma eliminazione
-                </button>
-              ) : (
-                <button
-                  type="button"
+    <ul className="flex flex-col gap-3">
+      {routines.map((routine) => {
+        const preview = routine.exercises.slice(0, 3).map((exercise) => exercise.exerciseName)
+        const extra = routine.exercises.length - preview.length
+        return (
+          <li key={routine.id}>
+            <Card className="flex flex-col gap-3">
+              <div className="flex items-start gap-2">
+                <div className="min-w-0 flex-1">
+                  <h2 className="truncate font-display text-2xl font-bold uppercase tracking-wide text-text">
+                    {routine.name}
+                  </h2>
+                  <p className="text-xs text-text-muted">{routine.exercises.length} esercizi</p>
+                </div>
+                <IconButton icon="pencil" label="Modifica" onClick={() => onEdit(routine)} />
+                <IconButton
+                  icon="trash"
+                  label="Elimina"
                   onClick={() => setPendingDeleteId(routine.id)}
-                  className="rounded-md border border-danger px-3 py-1.5 text-xs text-danger"
-                >
-                  Elimina
-                </button>
+                />
+              </div>
+
+              {preview.length > 0 && (
+                <p className="text-sm text-text-muted">
+                  {preview.join(' · ')}
+                  {extra > 0 ? ` · +${extra}` : ''}
+                </p>
               )}
-            </div>
+
+              {pendingDeleteId === routine.id ? (
+                <div className="flex gap-2">
+                  <Button variant="danger" fullWidth onClick={() => confirmDelete(routine.id)}>
+                    Conferma eliminazione
+                  </Button>
+                  <Button onClick={() => setPendingDeleteId(null)}>Annulla</Button>
+                </div>
+              ) : (
+                <Button
+                  variant="primary"
+                  size="lg"
+                  icon="play"
+                  fullWidth
+                  onClick={() => onStartSession(routine)}
+                >
+                  Avvia sessione
+                </Button>
+              )}
+            </Card>
           </li>
-        ))}
-      </ul>
-    </div>
+        )
+      })}
+    </ul>
   )
 }

@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Button } from '../../components/ui/Button'
+import { PageHeader } from '../../components/ui/PageHeader'
 import type { Routine, RoutineExercise, RoutineInput } from '../../lib/types'
 import { useSession } from '../session/SessionContext'
 import { RoutineCsvImport } from './RoutineCsvImport'
@@ -61,21 +63,21 @@ export function RoutinesPage({ uid }: { uid: string }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={handleStartFreeSession}
-          className="self-start rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-text hover:bg-surface-hover"
-        >
-          Avvia sessione libera
-        </button>
-        <button
-          type="button"
-          onClick={() => setImportingCsv(true)}
-          className="self-start rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-text hover:bg-surface-hover"
-        >
-          Importa da CSV
-        </button>
+      <PageHeader
+        title="Routine"
+        actions={
+          <Button variant="primary" icon="plus" onClick={() => setEditingRoutine('new')}>
+            Nuova
+          </Button>
+        }
+      />
+      <div className="grid grid-cols-2 gap-2">
+        <Button icon="flame" onClick={handleStartFreeSession}>
+          Sessione libera
+        </Button>
+        <Button icon="upload" onClick={() => setImportingCsv(true)}>
+          Importa CSV
+        </Button>
       </div>
       <RoutineList
         routines={routines}

@@ -1,5 +1,9 @@
 import { useState } from 'react'
 import { ExerciseAutocomplete } from '../../components/ExerciseAutocomplete'
+import { Button, IconButton } from '../../components/ui/Button'
+import { Card } from '../../components/ui/Card'
+import { NumberField, TextField } from '../../components/ui/fields'
+import { PageHeader } from '../../components/ui/PageHeader'
 import type { Routine, RoutineExercise, RoutineInput } from '../../lib/types'
 
 interface RoutineFormProps {
@@ -69,126 +73,106 @@ export function RoutineForm({ uid, initialRoutine, onSave, onCancel }: RoutineFo
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <PageHeader
+        title={initialRoutine ? 'Modifica routine' : 'Nuova routine'}
+        showLogout={false}
+        actions={<IconButton icon="x" label="Annulla" onClick={onCancel} />}
+      />
+
       <div>
-        <label className="mb-1 block text-sm font-medium text-text-muted">Nome routine</label>
-        <input
-          type="text"
+        <TextField
+          label="Nome routine"
           value={name}
           onChange={(event) => setName(event.target.value)}
-          className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-text"
           placeholder="Es. Push day"
         />
         {nameError && <p className="mt-1 text-sm text-danger">{nameError}</p>}
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-text-muted">Aggiungi esercizio</label>
+        <span className="mb-1 block text-xs font-medium uppercase tracking-wider text-text-muted">
+          Aggiungi esercizio
+        </span>
         <ExerciseAutocomplete uid={uid} onSelect={addExercise} />
       </div>
 
-      <ul className="flex flex-col gap-2">
+      <ul className="flex flex-col gap-3">
         {exercises.map((exercise, index) => (
-          <li
-            key={`${exercise.exerciseId}-${index}`}
-            className="flex flex-wrap items-center gap-2 rounded-md border border-border bg-surface p-2"
-          >
-            <span className="min-w-[120px] flex-1 text-sm font-medium text-text">
-              {exercise.exerciseName}
-            </span>
-            <label className="text-xs text-text-muted">
-              Serie
-              <input
-                type="number"
-                min={1}
-                value={exercise.targetSets}
-                onChange={(event) =>
-                  updateExercise(index, { targetSets: Number(event.target.value) })
-                }
-                className="ml-1 w-14 rounded border border-border bg-bg px-1 py-0.5 text-text"
-              />
-            </label>
-            <label className="text-xs text-text-muted">
-              Reps
-              <input
-                type="number"
-                min={1}
-                value={exercise.targetReps}
-                onChange={(event) =>
-                  updateExercise(index, { targetReps: Number(event.target.value) })
-                }
-                className="ml-1 w-14 rounded border border-border bg-bg px-1 py-0.5 text-text"
-              />
-            </label>
-            <label className="text-xs text-text-muted">
-              Carico (kg)
-              <input
-                type="number"
-                min={0}
-                value={exercise.targetWeight ?? ''}
-                onChange={(event) =>
-                  updateExercise(index, {
-                    targetWeight: event.target.value ? Number(event.target.value) : undefined,
-                  })
-                }
-                className="ml-1 w-16 rounded border border-border bg-bg px-1 py-0.5 text-text"
-              />
-            </label>
-            <label className="text-xs text-text-muted">
-              Recupero (s)
-              <input
-                type="number"
-                min={0}
-                value={exercise.targetRestSeconds}
-                onChange={(event) =>
-                  updateExercise(index, { targetRestSeconds: Number(event.target.value) })
-                }
-                className="ml-1 w-16 rounded border border-border bg-bg px-1 py-0.5 text-text"
-              />
-            </label>
-            <div className="flex gap-1">
-              <button
-                type="button"
-                onClick={() => moveExercise(index, -1)}
-                disabled={index === 0}
-                className="rounded border border-border px-2 py-0.5 text-xs text-text disabled:opacity-30"
-              >
-                ↑
-              </button>
-              <button
-                type="button"
-                onClick={() => moveExercise(index, 1)}
-                disabled={index === exercises.length - 1}
-                className="rounded border border-border px-2 py-0.5 text-xs text-text disabled:opacity-30"
-              >
-                ↓
-              </button>
-              <button
-                type="button"
-                onClick={() => removeExercise(index)}
-                className="rounded border border-danger px-2 py-0.5 text-xs text-danger"
-              >
-                Rimuovi
-              </button>
-            </div>
+          <li key={`${exercise.exerciseId}-${index}`}>
+            <Card className="flex flex-col gap-3 p-3">
+              <div className="flex items-center gap-1">
+                <span className="min-w-0 flex-1 truncate font-semibold text-text">
+                  {exercise.exerciseName}
+                </span>
+                <IconButton
+                  icon="chevron-left"
+                  label="Sposta su"
+                  className="rotate-90"
+                  onClick={() => moveExercise(index, -1)}
+                  disabled={index === 0}
+                />
+                <IconButton
+                  icon="chevron-left"
+                  label="Sposta giù"
+                  className="-rotate-90"
+                  onClick={() => moveExercise(index, 1)}
+                  disabled={index === exercises.length - 1}
+                />
+                <IconButton
+                  icon="trash"
+                  label="Rimuovi esercizio"
+                  variant="danger-outline"
+                  onClick={() => removeExercise(index)}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <NumberField
+                  label="Serie"
+                  min={1}
+                  value={exercise.targetSets}
+                  onChange={(event) =>
+                    updateExercise(index, { targetSets: Number(event.target.value) })
+                  }
+                />
+                <NumberField
+                  label="Reps"
+                  min={1}
+                  value={exercise.targetReps}
+                  onChange={(event) =>
+                    updateExercise(index, { targetReps: Number(event.target.value) })
+                  }
+                />
+                <NumberField
+                  label="Carico (kg)"
+                  min={0}
+                  value={exercise.targetWeight ?? ''}
+                  onChange={(event) =>
+                    updateExercise(index, {
+                      targetWeight: event.target.value ? Number(event.target.value) : undefined,
+                    })
+                  }
+                />
+                <NumberField
+                  label="Recupero (s)"
+                  min={0}
+                  value={exercise.targetRestSeconds}
+                  onChange={(event) =>
+                    updateExercise(index, { targetRestSeconds: Number(event.target.value) })
+                  }
+                />
+              </div>
+            </Card>
           </li>
         ))}
       </ul>
 
       <div className="flex gap-2">
-        <button
-          type="submit"
-          disabled={saving}
-          className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-contrast hover:bg-accent-hover disabled:opacity-50"
-        >
+        <Button type="submit" variant="primary" size="lg" fullWidth disabled={saving}>
           Salva routine
-        </button>
-        <button
-          type="button"
-          onClick={onCancel}
-          className="rounded-md border border-border px-4 py-2 text-sm font-medium text-text hover:bg-surface-hover"
-        >
+        </Button>
+        <Button type="button" size="lg" onClick={onCancel}>
           Annulla
-        </button>
+        </Button>
       </div>
     </form>
   )
