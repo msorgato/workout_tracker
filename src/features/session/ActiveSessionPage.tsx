@@ -8,6 +8,8 @@ import { inputClass } from '../../components/ui/fields'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { Stepper } from '../../components/ui/Stepper'
 import { parseDecimal } from '../../lib/numberInput'
+import { TipsPanel } from '../exercise-tips/TipsPanel'
+import { useExerciseTips } from '../exercise-tips/useExerciseTips'
 import { RestTimer } from '../rest-timer/RestTimer'
 import { useSession } from './SessionContext'
 
@@ -33,6 +35,7 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
     finishSession,
   } = useSession()
   const navigate = useNavigate()
+  const exerciseTips = useExerciseTips(uid)
   const [restFor, setRestFor] = useState<{ exerciseIndex: number; seconds: number } | null>(null)
   const [weightInputs, setWeightInputs] = useState<Record<number, string>>({})
   const [repsInputs, setRepsInputs] = useState<Record<number, string>>({})
@@ -107,6 +110,16 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
                 <h2 className="font-display text-2xl font-bold uppercase tracking-wide text-text">
                   {exercise.exerciseName}
                 </h2>
+
+                <TipsPanel
+                  exerciseId={exercise.exerciseId}
+                  exerciseName={exercise.exerciseName}
+                  personalTips={exerciseTips.tipsByExercise.get(exercise.exerciseId) ?? []}
+                  error={exerciseTips.error}
+                  onAdd={exerciseTips.addTip}
+                  onUpdate={exerciseTips.updateTip}
+                  onDelete={exerciseTips.deleteTip}
+                />
 
                 {exercise.sets.length > 0 && (
                   <ul className="flex flex-col gap-1">
