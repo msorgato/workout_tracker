@@ -58,3 +58,15 @@ export interface CustomExercise {
   muscleGroup?: string
   createdAt: number
 }
+
+export type TipCategory = 'postura' | 'movimento' | 'carico' | 'sicurezza'
+
+export interface PersonalTip {
+  id: string
+  category: TipCategory
+  text: string
+}
+
+export interface Tip extends PersonalTip {
+  source: 'library' | 'personal'
+}

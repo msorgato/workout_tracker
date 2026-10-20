@@ -13,6 +13,9 @@ const PATHS = {
   'log-out': 'M9 21H5V3h4M16 17l5-5-5-5M21 12H9',
   'chevron-left': 'M15 5l-7 7 7 7',
   check: 'M4 12.5l5 5L20 6.5',
+  info: 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 16v-4M12 8h.01',
+  lightbulb:
+    'M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2z',
   minus: 'M5 12h14',
   x: 'M6 6l12 12M18 6L6 18',
   flame:

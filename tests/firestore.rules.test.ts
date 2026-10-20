@@ -53,4 +53,24 @@ describe('users/{uid}/** security rules', () => {
     await assertFails(db.doc(`users/${OWNER_UID}/routines/r1`).set({ name: 'Push day' }))
     await assertFails(db.doc(`users/${OWNER_UID}/routines/r1`).get())
   })
+
+  it('scopes exerciseTips documents to their owner', async () => {
+    const tipsPath = `users/${OWNER_UID}/exerciseTips/squat`
+    const tips = { tips: [{ id: 't1', category: 'postura', text: 'Schiena neutra' }] }
+
+    await assertSucceeds(
+      testEnv.authenticatedContext(OWNER_UID).firestore().doc(tipsPath).set(tips),
+    )
+    await assertSucceeds(testEnv.authenticatedContext(OWNER_UID).firestore().doc(tipsPath).get())
+    await assertSucceeds(
+      testEnv
+        .authenticatedContext(OWNER_UID)
+        .firestore()
+        .collection(`users/${OWNER_UID}/exerciseTips`)
+        .get(),
+    )
+    await assertFails(testEnv.authenticatedContext(OTHER_UID).firestore().doc(tipsPath).get())
+    await assertFails(testEnv.authenticatedContext(OTHER_UID).firestore().doc(tipsPath).set(tips))
+    await assertFails(testEnv.unauthenticatedContext().firestore().doc(tipsPath).get())
+  })
 })

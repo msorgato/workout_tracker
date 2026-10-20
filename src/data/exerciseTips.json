@@ -1,0 +1,416 @@
+{
+  "panca-piana": [
+    {
+      "category": "postura",
+      "text": "Scapole addotte e depresse, petto alto: tienile ferme per tutta la serie."
+    },
+    {
+      "category": "postura",
+      "text": "Piedi ben appoggiati a terra e glutei a contatto con la panca."
+    },
+    {
+      "category": "movimento",
+      "text": "Porta il bilanciere al petto in modo controllato, con gli avambracci quasi verticali."
+    },
+    {
+      "category": "carico",
+      "text": "Scegli un carico con cui chiudi tutte le ripetizioni con la tecnica pulita, senza far rimbalzare il bilanciere."
+    },
+    {
+      "category": "sicurezza",
+      "text": "Con carichi impegnativi usa i supporti di sicurezza o fatti assistere."
+    }
+  ],
+  "panca-inclinata": [
+    {
+      "category": "postura",
+      "text": "Scapole addotte e schiena ben aderente allo schienale."
+    },
+    {
+      "category": "movimento",
+      "text": "Scendi verso la parte alta del petto, senza far allargare troppo i gomiti."
+    },
+    {
+      "category": "carico",
+      "text": "Di solito si usa meno carico che alla panca piana: parti prudente."
+    },
+    {
+      "category": "sicurezza",
+      "text": "Regola l'inclinazione moderata, circa 30°, per non caricare troppo le spalle."
+    }
+  ],
+  "croci-manubri": [
+    {
+      "category": "postura",
+      "text": "Petto aperto, scapole ferme e gomiti leggermente flessi."
+    },
+    {
+      "category": "movimento",
+      "text": "Scendi ad arco fino a sentire l'allungamento del petto, senza andare oltre il comfort della spalla."
+    },
+    {
+      "category": "carico",
+      "text": "Esercizio di rifinitura: meglio un carico moderato e un movimento controllato."
+    }
+  ],
+  "squat": [
+    {
+      "category": "postura",
+      "text": "Petto alto, schiena neutra e sguardo avanti: evita di arrotondare la zona lombare."
+    },
+    {
+      "category": "postura",
+      "text": "Piedi poco più larghi delle spalle, punte leggermente aperte."
+    },
+    {
+      "category": "movimento",
+      "text": "Le ginocchia seguono la direzione delle punte dei piedi, senza cedere verso l'interno."
+    },
+    {
+      "category": "movimento",
+      "text": "Spingi a terra con tutto il piede e risali mantenendo il busto stabile."
+    },
+    {
+      "category": "sicurezza",
+      "text": "Usa i supporti del rack e non aumentare il carico se la profondità o la tecnica peggiorano."
+    }
+  ],
+  "leg-press": [
+    {
+      "category": "postura",
+      "text": "Schiena e glutei aderenti allo schienale per tutta la serie."
+    },
+    {
+      "category": "movimento",
+      "text": "Non bloccare le ginocchia in alto e non far staccare il bacino in basso."
+    },
+    {
+      "category": "carico",
+      "text": "Aumenta il peso solo se mantieni la stessa ampiezza di movimento."
+    }
+  ],
+  "affondi": [
+    {
+      "category": "postura",
+      "text": "Busto eretto, addome attivo e sguardo avanti."
+    },
+    {
+      "category": "movimento",
+      "text": "Ginocchio anteriore in linea con la punta del piede; il passo deve essere abbastanza lungo da restare stabile."
+    },
+    {
+      "category": "carico",
+      "text": "Cura l'equilibrio prima del carico: aggiungi peso solo quando il movimento è fluido."
+    },
+    {
+      "category": "sicurezza",
+      "text": "Se senti dolore al ginocchio, accorcia il movimento o riduci il carico."
+    }
+  ],
+  "stacco-da-terra": [
+    {
+      "category": "postura",
+      "text": "Schiena neutra dall'inizio alla fine: non arrotondare la zona lombare."
+    },
+    {
+      "category": "postura",
+      "text": "Bilanciere vicino alle gambe, spalle appena davanti alla barra alla partenza."
+    },
+    {
+      "category": "movimento",
+      "text": "Spingi il pavimento con le gambe e porta avanti il bacino in alto, senza inarcare la schiena."
+    },
+    {
+      "category": "carico",
+      "text": "Aumenta il carico gradualmente: se la schiena cede, la serie è finita."
+    },
+    {
+      "category": "sicurezza",
+      "text": "Respira e irrigidisci l'addome prima di ogni ripetizione."
+    }
+  ],
+  "lat-machine": [
+    {
+      "category": "postura",
+      "text": "Petto in fuori, spalle lontane dalle orecchie e busto leggermente inclinato indietro."
+    },
+    {
+      "category": "movimento",
+      "text": "Porta la barra verso la parte alta del petto guidando il movimento con i gomiti."
+    },
+    {
+      "category": "carico",
+      "text": "Evita di usare lo slancio del busto: se serve, riduci il carico."
+    }
+  ],
+  "rematore-bilanciere": [
+    {
+      "category": "postura",
+      "text": "Busto inclinato in avanti, schiena neutra e addome in tensione."
+    },
+    {
+      "category": "movimento",
+      "text": "Tira il bilanciere verso l'ombelico portando i gomiti indietro."
+    },
+    {
+      "category": "carico",
+      "text": "Mantieni il busto fermo: se oscilli, scegli un carico più leggero."
+    },
+    {
+      "category": "sicurezza",
+      "text": "Non arrotondare la schiena nelle ultime ripetizioni."
+    }
+  ],
+  "trazioni": [
+    {
+      "category": "postura",
+      "text": "Spalle lontane dalle orecchie e addome in tensione, senza inarcare troppo la schiena."
+    },
+    {
+      "category": "movimento",
+      "text": "Parti da braccia estese e tira portando il petto verso la sbarra."
+    },
+    {
+      "category": "carico",
+      "text": "Se non completi la serie, usa un elastico o una macchina assistita invece di dondolare."
+    }
+  ],
+  "military-press": [
+    {
+      "category": "postura",
+      "text": "Glutei e addome contratti per non inarcare la zona lombare."
+    },
+    {
+      "category": "movimento",
+      "text": "Spingi il bilanciere in linea retta sopra la testa, portando il capo leggermente avanti a fine movimento."
+    },
+    {
+      "category": "carico",
+      "text": "Parti con un carico prudente: è un esercizio che stressa molto le spalle."
+    },
+    {
+      "category": "sicurezza",
+      "text": "Se senti fastidio alla spalla, riduci il carico o l'ampiezza del movimento."
+    }
+  ],
+  "alzate-laterali": [
+    {
+      "category": "postura",
+      "text": "Busto stabile, spalle basse e gomiti leggermente flessi."
+    },
+    {
+      "category": "movimento",
+      "text": "Solleva i manubri fino all'altezza delle spalle, senza oltrepassarla."
+    },
+    {
+      "category": "carico",
+      "text": "Usa pesi leggeri e controlla la discesa: lo slancio toglie lavoro al deltoide."
+    }
+  ],
+  "curl-bicipiti": [
+    {
+      "category": "postura",
+      "text": "Gomiti vicini ai fianchi e busto fermo, senza oscillare."
+    },
+    {
+      "category": "movimento",
+      "text": "Sali con controllo e scendi lentamente, estendendo quasi completamente le braccia."
+    },
+    {
+      "category": "carico",
+      "text": "Se devi dondolare per sollevare il bilanciere, il carico è troppo alto."
+    }
+  ],
+  "french-press": [
+    {
+      "category": "postura",
+      "text": "Gomiti puntati verso l'alto e vicini tra loro, schiena ben appoggiata."
+    },
+    {
+      "category": "movimento",
+      "text": "Fletti solo gli avambracci, tenendo ferme le braccia."
+    },
+    {
+      "category": "carico",
+      "text": "Parti con un carico leggero per proteggere i gomiti."
+    },
+    {
+      "category": "sicurezza",
+      "text": "Con il bilanciere sopra la testa usa un carico che riesci a controllare in sicurezza."
+    }
+  ],
+  "dip-tricipiti": [
+    {
+      "category": "postura",
+      "text": "Spalle lontane dalle orecchie e busto leggermente inclinato in avanti."
+    },
+    {
+      "category": "movimento",
+      "text": "Scendi in modo controllato fino a un'ampiezza che le spalle tollerano bene."
+    },
+    {
+      "category": "carico",
+      "text": "Aggiungi zavorra solo quando completi le serie con tecnica pulita."
+    },
+    {
+      "category": "sicurezza",
+      "text": "Se senti fastidio alle spalle, riduci la profondità."
+    }
+  ],
+  "plank": [
+    {
+      "category": "postura",
+      "text": "Corpo in linea retta da testa a talloni: bacino né alzato né abbassato."
+    },
+    {
+      "category": "postura",
+      "text": "Gomiti sotto le spalle, glutei e addome contratti."
+    },
+    {
+      "category": "movimento",
+      "text": "Respira in modo regolare senza trattenere il fiato."
+    },
+    {
+      "category": "carico",
+      "text": "Interrompi la serie quando la postura cede, anche se il tempo non è finito."
+    }
+  ],
+  "crunch": [
+    {
+      "category": "postura",
+      "text": "Lombari appoggiati a terra e collo rilassato, senza tirare la testa con le mani."
+    },
+    {
+      "category": "movimento",
+      "text": "Solleva solo le scapole, contraendo gli addominali, e scendi in modo controllato."
+    },
+    {
+      "category": "movimento",
+      "text": "Espira mentre sali e inspira mentre scendi."
+    }
+  ],
+  "pushdown-cavo": [
+    {
+      "category": "postura",
+      "text": "Gomiti vicini ai fianchi e fermi, spalle basse e busto leggermente inclinato in avanti."
+    },
+    {
+      "category": "movimento",
+      "text": "Estendi completamente gli avambracci verso il basso e risali lentamente fino a circa 90° di flessione."
+    },
+    {
+      "category": "carico",
+      "text": "Se i gomiti si muovono o il busto spinge, il carico è troppo alto: riducilo."
+    }
+  ],
+  "rematore-manubrio": [
+    {
+      "category": "postura",
+      "text": "Schiena neutra e busto quasi parallelo al pavimento, con una mano e un ginocchio in appoggio sulla panca."
+    },
+    {
+      "category": "movimento",
+      "text": "Tira il manubrio verso l'anca con il gomito vicino al corpo, senza ruotare il busto."
+    },
+    {
+      "category": "carico",
+      "text": "Scegli un peso che controlli senza usare lo slancio e scendi in modo controllato."
+    },
+    {
+      "category": "sicurezza",
+      "text": "Non arrotondare la schiena nelle ultime ripetizioni."
+    }
+  ],
+  "pulley-basso": [
+    {
+      "category": "postura",
+      "text": "Busto eretto, petto aperto e spalle lontane dalle orecchie, senza dondolare avanti e indietro."
+    },
+    {
+      "category": "movimento",
+      "text": "Porta la maniglia verso l'addome avvicinando le scapole e torna a braccia estese con controllo."
+    },
+    {
+      "category": "carico",
+      "text": "Se devi spingerti indietro con il busto per tirare, riduci il carico."
+    }
+  ],
+  "face-pull": [
+    {
+      "category": "postura",
+      "text": "Corda all'altezza del viso circa, busto stabile e gomiti alti."
+    },
+    {
+      "category": "movimento",
+      "text": "Tira verso il viso aprendo i gomiti e ruotando le spalle verso l'esterno, con una breve pausa a fine movimento."
+    },
+    {
+      "category": "carico",
+      "text": "Esercizio per deltoidi posteriori e spalle: meglio un carico leggero e ripetizioni pulite."
+    }
+  ],
+  "curl-manubri-alternato": [
+    {
+      "category": "postura",
+      "text": "Gomiti vicini ai fianchi, busto fermo e spalle basse."
+    },
+    {
+      "category": "movimento",
+      "text": "Ruota il polso verso l'alto durante la salita e scendi lentamente, alternando un braccio alla volta."
+    },
+    {
+      "category": "carico",
+      "text": "Se devi dondolare il busto per sollevare, il carico è troppo alto."
+    }
+  ],
+  "leg-curl": [
+    {
+      "category": "postura",
+      "text": "Bacino ben appoggiato e schiena non inarcata; regola il rullo appena sopra i talloni."
+    },
+    {
+      "category": "movimento",
+      "text": "Fletti le ginocchia con controllo fino alla contrazione e torna lentamente, senza far sbattere i pesi."
+    },
+    {
+      "category": "carico",
+      "text": "Se per aiutarti sollevi il bacino, riduci il carico."
+    },
+    {
+      "category": "sicurezza",
+      "text": "Se senti dolore o crampi dietro al ginocchio, interrompi la serie e riduci il peso."
+    }
+  ],
+  "calf-raise": [
+    {
+      "category": "postura",
+      "text": "Busto eretto, appoggio sull'avampiede e ginocchia quasi estese ma non bloccate."
+    },
+    {
+      "category": "movimento",
+      "text": "Sali il più possibile con una breve pausa in alto e scendi allungando bene il polpaccio."
+    },
+    {
+      "category": "carico",
+      "text": "L'ampiezza completa del movimento conta più del peso usato."
+    }
+  ],
+  "crunch-al-cavo": [
+    {
+      "category": "postura",
+      "text": "In ginocchio con il bacino fermo e la fune ai lati della testa: non tirare con le braccia."
+    },
+    {
+      "category": "movimento",
+      "text": "Arrotonda il busto avvicinando le costole al bacino e risali lentamente, senza spostare i fianchi."
+    },
+    {
+      "category": "carico",
+      "text": "Usa un carico moderato: se si muovono anche i fianchi, è troppo."
+    },
+    {
+      "category": "sicurezza",
+      "text": "Non tirare con il collo e mantieni la testa in linea con la colonna."
+    }
+  ]
+}
