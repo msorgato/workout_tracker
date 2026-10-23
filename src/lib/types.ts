@@ -38,6 +38,7 @@ export interface SessionExercise {
   exerciseName: string
   order: number
   sets: SessionSet[]
+  targetSets?: number
   targetRestSeconds?: number
   targetWeight?: number
 }

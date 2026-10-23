@@ -4,6 +4,7 @@ import { ExerciseAutocomplete } from '../../components/ExerciseAutocomplete'
 import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
 import { EmptyState } from '../../components/ui/EmptyState'
+import { Icon } from '../../components/ui/Icon'
 import { inputClass } from '../../components/ui/fields'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { Stepper } from '../../components/ui/Stepper'
@@ -12,6 +13,7 @@ import { TipsPanel } from '../exercise-tips/TipsPanel'
 import { useExerciseTips } from '../exercise-tips/useExerciseTips'
 import { RestTimer } from '../rest-timer/RestTimer'
 import { useSession } from './SessionContext'
+import { getSetProgress } from './setProgress'
 
 interface ActiveSessionPageProps {
   uid: string
@@ -39,6 +41,7 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
   const [restFor, setRestFor] = useState<{ exerciseIndex: number; seconds: number } | null>(null)
   const [weightInputs, setWeightInputs] = useState<Record<number, string>>({})
   const [repsInputs, setRepsInputs] = useState<Record<number, string>>({})
+  const [extraUnlocked, setExtraUnlocked] = useState<Record<number, boolean>>({})
 
   const timerVisible = restFor !== null
   useEffect(() => {
@@ -103,13 +106,30 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
           const repsValue = repsInputs[index] ?? ''
           const restSeconds = exercise.targetRestSeconds ?? DEFAULT_REST_SECONDS
           const isResting = restFor?.exerciseIndex === index
+          const progress = getSetProgress(exercise, extraUnlocked[index] ?? false)
 
           return (
             <li key={`${exercise.exerciseId}-${index}`}>
               <Card glow={isResting} className="flex flex-col gap-4">
-                <h2 className="font-display text-2xl font-bold uppercase tracking-wide text-text">
-                  {exercise.exerciseName}
-                </h2>
+                <div className="flex items-start justify-between gap-2">
+                  <h2 className="min-w-0 font-display text-2xl font-bold uppercase tracking-wide text-text">
+                    {exercise.exerciseName}
+                  </h2>
+                  {progress.target !== undefined && (
+                    <span
+                      className={`flex shrink-0 items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold tabular-nums ${
+                        progress.isComplete
+                          ? 'bg-accent text-accent-contrast'
+                          : 'bg-surface text-text-muted'
+                      }`}
+                    >
+                      {progress.isComplete && <Icon name="check" size={14} />}
+                      {progress.isComplete ? 'Completato ' : 'Serie '}
+                      {progress.done}/{progress.target}
+                      {progress.extraCount > 0 && ' · extra'}
+                    </span>
+                  )}
+                </div>
 
                 <TipsPanel
                   exerciseId={exercise.exerciseId}
@@ -137,55 +157,72 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
                         </span>
                         <span className="flex-1 tabular-nums">{set.weight} kg</span>
                         <span className="tabular-nums">× {set.reps} reps</span>
+                        {progress.target !== undefined && set.setNumber > progress.target && (
+                          <span className="rounded-full bg-surface-raised px-2 py-0.5 text-xs text-text-muted">
+                            extra
+                          </span>
+                        )}
                       </li>
                     ))}
                   </ul>
                 )}
 
-                <div className="flex gap-3">
-                  <Stepper
-                    label="Peso"
-                    unit="kg"
-                    decimal
-                    step={WEIGHT_STEP}
-                    value={weightValue}
-                    onChange={(value) =>
-                      setWeightInputs((current) => ({ ...current, [index]: value }))
-                    }
-                  />
-                  <Stepper
-                    label="Reps"
-                    step={REPS_STEP}
-                    value={repsValue}
-                    onChange={(value) =>
-                      setRepsInputs((current) => ({ ...current, [index]: value }))
-                    }
-                  />
-                </div>
+                {!progress.canLogSet ? (
+                  <Button
+                    icon="plus"
+                    fullWidth
+                    onClick={() => setExtraUnlocked((current) => ({ ...current, [index]: true }))}
+                  >
+                    Aggiungi serie extra
+                  </Button>
+                ) : (
+                  <>
+                    <div className="flex flex-col gap-3">
+                      <Stepper
+                        label="Peso"
+                        unit="kg"
+                        decimal
+                        step={WEIGHT_STEP}
+                        value={weightValue}
+                        onChange={(value) =>
+                          setWeightInputs((current) => ({ ...current, [index]: value }))
+                        }
+                      />
+                      <Stepper
+                        label="Reps"
+                        step={REPS_STEP}
+                        value={repsValue}
+                        onChange={(value) =>
+                          setRepsInputs((current) => ({ ...current, [index]: value }))
+                        }
+                      />
+                    </div>
 
-                <label className="flex items-center justify-between gap-3 text-xs font-medium uppercase tracking-wider text-text-muted">
-                  Recupero (s)
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    min={0}
-                    value={restSeconds}
-                    onChange={(event) =>
-                      updateExerciseRestSeconds(index, Number(event.target.value))
-                    }
-                    className={`${inputClass} w-24 text-center`}
-                  />
-                </label>
+                    <label className="flex items-center justify-between gap-3 text-xs font-medium uppercase tracking-wider text-text-muted">
+                      Recupero (s)
+                      <input
+                        type="number"
+                        inputMode="numeric"
+                        min={0}
+                        value={restSeconds}
+                        onChange={(event) =>
+                          updateExerciseRestSeconds(index, Number(event.target.value))
+                        }
+                        className={`${inputClass} w-24 text-center`}
+                      />
+                    </label>
 
-                <Button
-                  variant="primary"
-                  size="lg"
-                  icon="check"
-                  fullWidth
-                  onClick={() => handleCompleteSet(index, restSeconds)}
-                >
-                  Serie {exercise.sets.length + 1} completata
-                </Button>
+                    <Button
+                      variant="primary"
+                      size="lg"
+                      icon="check"
+                      fullWidth
+                      onClick={() => handleCompleteSet(index, restSeconds)}
+                    >
+                      Serie {progress.nextSetNumber} completata
+                    </Button>
+                  </>
+                )}
               </Card>
             </li>
           )
