@@ -39,6 +39,7 @@ export async function createSessionFromRoutine(uid: string, routine: Routine): P
       exerciseName: exercise.exerciseName,
       order: exercise.order,
       sets: [],
+      targetSets: exercise.targetSets,
       targetRestSeconds: exercise.targetRestSeconds,
       targetWeight: exercise.targetWeight,
     }))

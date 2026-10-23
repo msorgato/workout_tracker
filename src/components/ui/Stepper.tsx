@@ -12,7 +12,7 @@ interface StepperProps {
 
 export function Stepper({ label, unit, value, step, decimal, onChange }: StepperProps) {
   return (
-    <div className="flex flex-1 flex-col items-center gap-1">
+    <div className="flex w-full flex-col items-center gap-1">
       <span className="text-xs font-medium uppercase tracking-wider text-text-muted">
         {label}
         {unit ? ` (${unit})` : ''}
@@ -32,7 +32,7 @@ export function Stepper({ label, unit, value, step, decimal, onChange }: Stepper
           placeholder="0"
           onChange={(event) => onChange(event.target.value)}
           onFocus={(event) => event.target.select()}
-          className="w-full min-w-0 bg-transparent text-center font-display text-4xl font-bold tabular-nums text-text focus:outline-none"
+          className="w-full min-w-[6ch] bg-transparent text-center font-display text-3xl font-bold tabular-nums text-text focus:outline-none min-[360px]:text-4xl"
         />
         <IconButton
           icon="plus"
