@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ExerciseAutocomplete } from '../../components/ExerciseAutocomplete'
 import { Button } from '../../components/ui/Button'
@@ -12,7 +12,13 @@ import { parseDecimal } from '../../lib/numberInput'
 import { TipsPanel } from '../exercise-tips/TipsPanel'
 import { useExerciseTips } from '../exercise-tips/useExerciseTips'
 import { RestTimer } from '../rest-timer/RestTimer'
+import { summarizeSession } from '../history/sessionSummary'
+import { SessionSummaryScreen, type SessionSummaryData } from '../xp/SessionSummaryScreen'
+import { XP_EXERCISE_BONUS, XP_PER_SET, sessionXp, totalXp } from '../xp/xp'
+import { XpChip } from '../xp/XpChip'
+import { XpPop } from '../xp/XpPop'
 import { useSession } from './SessionContext'
+import { listCompletedSessions } from './sessionsApi'
 import { getSetProgress } from './setProgress'
 
 interface ActiveSessionPageProps {
@@ -42,6 +48,14 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
   const [weightInputs, setWeightInputs] = useState<Record<number, string>>({})
   const [repsInputs, setRepsInputs] = useState<Record<number, string>>({})
   const [extraUnlocked, setExtraUnlocked] = useState<Record<number, boolean>>({})
+  // Effetti effimeri guidati dall'evento "serie completata" (non da diff dello stato):
+  // così non scattano al ricaricamento di una sessione già completata.
+  const [pops, setPops] = useState<{ id: number; exerciseIndex: number; amount: number }[]>([])
+  const [lastAddedSet, setLastAddedSet] = useState<{ exerciseIndex: number; setNumber: number }>()
+  const [poppedBadge, setPoppedBadge] = useState<number>()
+  const popIdRef = useRef(0)
+  const [finishing, setFinishing] = useState(false)
+  const [summary, setSummary] = useState<SessionSummaryData>()
 
   const timerVisible = restFor !== null
   useEffect(() => {
@@ -51,6 +65,10 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
       document.documentElement.style.setProperty('--dock-h', '0px')
     }
   }, [timerVisible])
+
+  if (summary) {
+    return <SessionSummaryScreen summary={summary} onClose={onDone} />
+  }
 
   if (!session) {
     return (
@@ -77,13 +95,55 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
     const targetWeight = session!.exercises[exerciseIndex]?.targetWeight
     const weight = parseDecimal(weightInputs[exerciseIndex] ?? targetWeight?.toString() ?? '')
     const reps = parseDecimal(repsInputs[exerciseIndex] ?? '')
+    const exercise = session!.exercises[exerciseIndex]
+    const completesExercise =
+      typeof exercise.targetSets === 'number' && exercise.sets.length + 1 === exercise.targetSets
     await completeSet(exerciseIndex, { weight, reps, restSeconds })
     setRestFor({ exerciseIndex, seconds: restSeconds })
+
+    const newPops = [{ id: ++popIdRef.current, exerciseIndex, amount: XP_PER_SET }]
+    if (completesExercise) {
+      newPops.push({ id: ++popIdRef.current, exerciseIndex, amount: XP_EXERCISE_BONUS })
+      setPoppedBadge(exerciseIndex)
+      setTimeout(() => setPoppedBadge(undefined), 1000)
+    }
+    setPops((current) => [...current, ...newPops])
+    setLastAddedSet({ exerciseIndex, setNumber: exercise.sets.length + 1 })
+    setTimeout(() => setLastAddedSet(undefined), 1000)
+  }
+
+  function removePop(id: number) {
+    setPops((current) => current.filter((pop) => pop.id !== id))
   }
 
   async function handleFinish() {
-    await finishSession()
-    onDone()
+    if (finishing) return
+    setFinishing(true)
+    const snapshot = session!
+    // Lo storico si legge PRIMA di concludere: la sessione attiva non è ancora inclusa.
+    // Se la lettura fallisce la sessione si conclude comunque, senza livello nel riepilogo.
+    let before: number | null = null
+    try {
+      before = totalXp(await listCompletedSessions(uid))
+    } catch {
+      before = null
+    }
+    try {
+      await finishSession()
+    } catch (error) {
+      setFinishing(false)
+      throw error
+    }
+    setRestFor(null)
+    const xpGained = sessionXp(snapshot, { concluded: true })
+    const stats = summarizeSession(snapshot)
+    setSummary({
+      xpGained,
+      setCount: stats.setCount,
+      volumeKg: stats.volumeKg,
+      before,
+      after: before === null ? null : before + xpGained,
+    })
   }
 
   const restExercise = restFor ? session.exercises[restFor.exerciseIndex] : undefined
@@ -94,9 +154,12 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
         title={session.routineName ?? 'Sessione libera'}
         showLogout={false}
         actions={
-          <Button variant="secondary" onClick={handleFinish}>
-            Termina
-          </Button>
+          <>
+            <XpChip xp={sessionXp(session, { concluded: false })} />
+            <Button variant="secondary" onClick={handleFinish} disabled={finishing}>
+              Termina
+            </Button>
+          </>
         }
       />
 
@@ -110,7 +173,14 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
 
           return (
             <li key={`${exercise.exerciseId}-${index}`}>
-              <Card glow={isResting} className="flex flex-col gap-4">
+              <Card glow={isResting} className="relative flex flex-col gap-4">
+                <div className="pointer-events-none absolute right-4 top-14 z-10 flex flex-col items-end gap-1">
+                  {pops
+                    .filter((pop) => pop.exerciseIndex === index)
+                    .map((pop) => (
+                      <XpPop key={pop.id} amount={pop.amount} onDone={() => removePop(pop.id)} />
+                    ))}
+                </div>
                 <div className="flex items-start justify-between gap-2">
                   <h2 className="min-w-0 font-display text-2xl font-bold uppercase tracking-wide text-text">
                     {exercise.exerciseName}
@@ -121,7 +191,7 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
                         progress.isComplete
                           ? 'bg-accent text-accent-contrast'
                           : 'bg-surface text-text-muted'
-                      }`}
+                      } ${poppedBadge === index ? 'animate-badge-pop' : ''}`}
                     >
                       {progress.isComplete && <Icon name="check" size={14} />}
                       {progress.isComplete ? 'Completato ' : 'Serie '}
@@ -150,6 +220,11 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
                           setIndex === exercise.sets.length - 1
                             ? 'bg-accent/10 text-text'
                             : 'bg-surface text-text-muted'
+                        } ${
+                          lastAddedSet?.exerciseIndex === index &&
+                          lastAddedSet.setNumber === set.setNumber
+                            ? 'animate-row-flash'
+                            : ''
                         }`}
                       >
                         <span className="w-6 font-display text-lg font-bold tabular-nums text-accent">
