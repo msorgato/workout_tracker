@@ -117,3 +117,129 @@ Il sistema SHALL mostrare il valore di peso e di ripetizioni per intero, compres
 #### Scenario: Incremento di 2,5 kg
 - **WHEN** il peso mostrato è 40 e l'utente tocca "+"
 - **THEN** il campo mostra 42.5 per intero, non "42."
+
+### Requirement: Feedback XP alla serie completata
+Il sistema SHALL mostrare, subito dopo la registrazione di una serie, un indicatore "+10 XP" animato (breve, che si dissolve) e un'evidenziazione momentanea della riga della serie appena aggiunta.
+
+#### Scenario: Serie registrata
+- **WHEN** l'utente completa una serie
+- **THEN** compare "+10 XP" vicino al pulsante di completamento e la nuova riga della serie viene evidenziata per un istante
+
+#### Scenario: Movimento ridotto
+- **WHEN** l'utente ha attivato la preferenza "riduci movimento"
+- **THEN** nessuna animazione di spostamento o scala viene eseguita e l'indicazione XP resta comunque leggibile per un istante
+
+### Requirement: Feedback all'esercizio completato
+Il sistema SHALL segnalare con un'animazione di conferma e un indicatore "+25 XP" il momento in cui un esercizio raggiunge le serie previste.
+
+#### Scenario: Ultima serie prevista
+- **WHEN** l'utente registra la quarta serie di un esercizio che ne prevede 4
+- **THEN** il badge "Completato 4/4" appare con un'animazione di conferma e compare "+25 XP"
+
+#### Scenario: Esercizio senza serie previste
+- **WHEN** l'utente registra serie su un esercizio senza serie previste
+- **THEN** non compare alcuna animazione di completamento né "+25 XP"
+
+### Requirement: XP della sessione sempre visibili
+Il sistema SHALL mostrare nella testata della sessione attiva il totale degli XP guadagnati nella sessione corrente, aggiornato a ogni serie ed esercizio completato (il bonus di sessione non è incluso finché la sessione è attiva).
+
+#### Scenario: Aggiornamento del totale
+- **WHEN** l'utente registra due serie e completa un esercizio da 2 serie
+- **THEN** il contatore mostra 45 XP (20 + 25)
+
+### Requirement: Riepilogo di fine sessione
+Il sistema SHALL mostrare, alla conclusione di una sessione, una schermata di riepilogo con XP guadagnati (compreso il bonus di sessione), numero di serie, volume totale e avanzamento nel livello, prima di tornare allo storico.
+
+#### Scenario: Chiusura con riepilogo
+- **WHEN** l'utente termina la sessione
+- **THEN** la sessione viene conclusa e compare il riepilogo con XP, serie e volume; un pulsante di chiusura porta allo storico
+
+#### Scenario: Conteggio animato
+- **WHEN** il riepilogo viene mostrato
+- **THEN** gli XP guadagnati salgono da 0 al valore finale e la barra del livello si riempie dal valore precedente a quello nuovo; con "riduci movimento" compaiono direttamente i valori finali
+
+### Requirement: Level up
+Il sistema SHALL mostrare nel riepilogo un banner "LEVEL UP" con il nuovo livello quando gli XP della sessione fanno superare una soglia di livello.
+
+#### Scenario: Soglia superata
+- **WHEN** l'utente aveva 180 XP totali e termina una sessione da 105 XP
+- **THEN** il riepilogo mostra "LEVEL UP" con livello 2
+
+#### Scenario: Soglia non superata
+- **WHEN** gli XP della sessione non fanno cambiare livello
+- **THEN** il riepilogo mostra la barra del livello aggiornata senza banner "LEVEL UP"
+
+### Requirement: Riepilogo resiliente agli errori
+Il sistema SHALL concludere comunque la sessione e mostrare il riepilogo con gli XP della sessione, senza livello, se lo storico non può essere letto.
+
+#### Scenario: Storico non leggibile
+- **WHEN** la lettura dello storico fallisce alla chiusura
+- **THEN** la sessione è conclusa e il riepilogo mostra XP, serie e volume senza barra del livello né "LEVEL UP"
+
+### Requirement: Avvio di una sessione senza routine
+
+Il sistema SHALL permettere di avviare una sessione di allenamento libera, senza partire da una routine, aggiungendo esercizi manualmente durante la sessione.
+
+#### Scenario: Avvio sessione libera
+
+- **WHEN** l'utente avvia una nuova sessione senza selezionare una routine
+- **THEN** il sistema crea una sessione con `startedAt` valorizzato, `routineId`/`routineName` assenti e un elenco esercizi vuoto, modificabile durante la sessione
+
+### Requirement: Persistenza incrementale delle serie completate
+
+Il sistema SHALL scrivere immediatamente su Firestore ogni serie completata durante la sessione attiva, senza attendere la chiusura della sessione.
+
+#### Scenario: Completamento di una serie
+
+- **WHEN** l'utente registra il completamento di una serie (peso, ripetizioni) per un esercizio della sessione attiva
+- **THEN** il sistema aggiorna immediatamente il documento della sessione su Firestore con la nuova serie (setNumber, weight, reps, restSeconds, completedAt)
+
+#### Scenario: Chiusura anticipata dell'app durante una sessione
+
+- **WHEN** l'app viene chiusa o ricaricata dopo che una o più serie sono state completate ma prima della chiusura della sessione
+- **THEN** le serie già completate risultano presenti nel documento sessione su Firestore e non vengono perse
+
+### Requirement: Aggiunta di esercizi durante la sessione attiva
+
+Il sistema SHALL permettere di aggiungere esercizi (dalla libreria o custom) alla sessione attiva anche se non presenti nella routine di partenza.
+
+#### Scenario: Aggiunta di un esercizio non pianificato
+
+- **WHEN** l'utente aggiunge un esercizio alla sessione attiva che non era previsto dalla routine di partenza (o la sessione è libera)
+- **THEN** il sistema include il nuovo esercizio nell'elenco `exercises` della sessione con il proprio ordine e permette di loggarne le serie
+
+### Requirement: Chiusura della sessione
+
+Il sistema SHALL permettere di terminare una sessione attiva, marcandola come conclusa.
+
+#### Scenario: Terminazione della sessione
+
+- **WHEN** l'utente termina la sessione attiva
+- **THEN** il sistema aggiorna il documento sessione impostando `endedAt` e la sessione non è più modificabile come "attiva"
+
+#### Scenario: Note opzionali alla chiusura
+
+- **WHEN** l'utente aggiunge una nota testuale alla sessione prima o durante la chiusura
+- **THEN** il sistema salva il testo nel campo `notes` del documento sessione
+
+### Requirement: Modifica del tempo di recupero per esercizio nella sessione attiva
+Il sistema SHALL permettere di impostare o modificare il tempo di recupero associato a ciascun esercizio della sessione attiva, indipendentemente dal fatto che provenga da una routine.
+
+#### Scenario: Modifica del tempo di recupero durante la sessione
+- **WHEN** l'utente modifica il valore del tempo di recupero mostrato per un esercizio della sessione attiva
+- **THEN** il sistema usa il nuovo valore come durata del countdown per il completamento della prossima serie di quell'esercizio, e lo persiste sul documento sessione
+
+#### Scenario: Esercizio senza target di recupero da routine
+- **WHEN** l'utente aggiunge un esercizio alla sessione attiva senza un target di recupero proveniente da una routine (sessione libera, o esercizio non pianificato)
+- **THEN** il sistema propone un tempo di recupero di default di 90 secondi per quell'esercizio, modificabile dall'utente prima del completamento della prima serie
+
+### Requirement: Precompilazione del peso dal carico target
+Il sistema SHALL precompilare il campo peso di una serie con il `targetWeight` configurato per l'esercizio (dalla routine di partenza), quando presente, lasciandolo comunque modificabile dall'utente prima di confermare la serie.
+
+#### Scenario: Esercizio con carico target da routine
+- **WHEN** l'utente inizia a loggare una serie per un esercizio che ha un `targetWeight` proveniente dalla routine di partenza
+- **THEN** il sistema mostra il campo peso già precompilato con quel valore, modificabile prima di confermare
+
+#### Scenario: Esercizio senza carico target
+- **WHEN** l'esercizio della sessione attiva non ha alcun `targetWeight` associato
+- **THEN** il sistema mostra il campo peso vuoto, senza alterare il resto dell'interfaccia
