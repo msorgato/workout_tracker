@@ -91,7 +91,6 @@ export function RoutineCsvImport({ uid, onImport, onCancel }: RoutineCsvImportPr
     <div className="flex flex-col gap-4">
       <PageHeader
         title="Importa CSV"
-        showLogout={false}
         actions={<IconButton icon="x" label="Annulla" onClick={onCancel} />}
       />
 

@@ -3,6 +3,8 @@ import { useAuth } from './features/auth/AuthContext'
 import { TabBar } from './components/ui/TabBar'
 import { RouteGuard } from './features/auth/RouteGuard'
 import { HistoryPage } from './features/history/HistoryPage'
+import { ProfileProvider } from './features/profile/ProfileContext'
+import { ProfilePage } from './features/profile/ProfilePage'
 import { RoutinesPage } from './features/routines/RoutinesPage'
 import { ActiveSessionPage } from './features/session/ActiveSessionPage'
 import { SessionProvider } from './features/session/SessionContext'
@@ -21,6 +23,7 @@ function AppRoutes() {
         element={<ActiveSessionPage uid={uid} onDone={() => navigate('/history')} />}
       />
       <Route path="/history" element={<HistoryPage uid={uid} />} />
+      <Route path="/profile" element={<ProfilePage uid={uid} />} />
     </Routes>
   )
 }
@@ -28,14 +31,16 @@ function AppRoutes() {
 function App() {
   return (
     <RouteGuard>
-      <SessionProvider>
-        <div className="mx-auto min-h-dvh max-w-md bg-bg text-text">
-          <main className="px-4 pb-[calc(var(--tabbar-h)+var(--dock-h)+env(safe-area-inset-bottom)+1rem)]">
-            <AppRoutes />
-          </main>
-          <TabBar />
-        </div>
-      </SessionProvider>
+      <ProfileProvider>
+        <SessionProvider>
+          <div className="mx-auto min-h-dvh max-w-md bg-bg text-text">
+            <main className="px-4 pb-[calc(var(--tabbar-h)+var(--dock-h)+env(safe-area-inset-bottom)+1rem)]">
+              <AppRoutes />
+            </main>
+            <TabBar />
+          </div>
+        </SessionProvider>
+      </ProfileProvider>
     </RouteGuard>
   )
 }

@@ -41,13 +41,17 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
     updateExerciseRestSeconds,
     updateNotes,
     finishSession,
+    restFor,
+    setRestFor,
+    weightInputs,
+    setWeightInputs,
+    repsInputs,
+    setRepsInputs,
+    extraUnlocked,
+    setExtraUnlocked,
   } = useSession()
   const navigate = useNavigate()
   const exerciseTips = useExerciseTips(uid)
-  const [restFor, setRestFor] = useState<{ exerciseIndex: number; seconds: number } | null>(null)
-  const [weightInputs, setWeightInputs] = useState<Record<number, string>>({})
-  const [repsInputs, setRepsInputs] = useState<Record<number, string>>({})
-  const [extraUnlocked, setExtraUnlocked] = useState<Record<number, boolean>>({})
   // Effetti effimeri guidati dall'evento "serie completata" (non da diff dello stato):
   // così non scattano al ricaricamento di una sessione già completata.
   const [pops, setPops] = useState<{ id: number; exerciseIndex: number; amount: number }[]>([])
@@ -99,7 +103,7 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
     const completesExercise =
       typeof exercise.targetSets === 'number' && exercise.sets.length + 1 === exercise.targetSets
     await completeSet(exerciseIndex, { weight, reps, restSeconds })
-    setRestFor({ exerciseIndex, seconds: restSeconds })
+    setRestFor({ exerciseIndex, seconds: restSeconds, deadline: Date.now() + restSeconds * 1000 })
 
     const newPops = [{ id: ++popIdRef.current, exerciseIndex, amount: XP_PER_SET }]
     if (completesExercise) {
@@ -152,7 +156,6 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
     <div className="flex flex-col gap-4">
       <PageHeader
         title={session.routineName ?? 'Sessione libera'}
-        showLogout={false}
         actions={
           <>
             <XpChip xp={sessionXp(session, { concluded: false })} />
@@ -328,6 +331,7 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
           <RestTimer
             key={restExercise?.sets.length}
             targetSeconds={restFor.seconds}
+            deadline={restFor.deadline}
             exerciseName={restExercise?.exerciseName}
             onFinish={() => setRestFor(null)}
           />

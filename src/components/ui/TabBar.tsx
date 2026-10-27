@@ -6,6 +6,7 @@ const TABS: { to: string; label: string; icon: IconName }[] = [
   { to: '/routines', label: 'Routine', icon: 'list' },
   { to: '/session', label: 'Sessione', icon: 'dumbbell' },
   { to: '/history', label: 'Storico', icon: 'history' },
+  { to: '/profile', label: 'Profilo', icon: 'user' },
 ]
 
 export function TabBar() {
