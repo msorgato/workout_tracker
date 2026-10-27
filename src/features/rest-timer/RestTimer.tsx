@@ -4,13 +4,19 @@ import restCompleteSound from '../../assets/sounds/rest-complete.wav'
 
 interface RestTimerProps {
   targetSeconds: number
+  /** Scadenza assoluta (ms): permette di riprendere il countdown dopo uno smontaggio. */
+  deadline: number
   exerciseName?: string
   onFinish: () => void
 }
 
-export function RestTimer({ targetSeconds, exerciseName, onFinish }: RestTimerProps) {
-  const [remaining, setRemaining] = useState(targetSeconds)
+export function RestTimer({ targetSeconds, deadline, exerciseName, onFinish }: RestTimerProps) {
+  const [remaining, setRemaining] = useState(() =>
+    Math.max(0, Math.ceil((deadline - Date.now()) / 1000)),
+  )
   const onFinishRef = useRef(onFinish)
+  // Già scaduto al montaggio (l'utente era in un'altra sezione): si chiude senza suono né vibrazione.
+  const [expiredOnMount] = useState(() => deadline <= Date.now())
   const finishedRef = useRef(false)
   // Scadenza assoluta (non un contatore a scalare): un setTimeout/setInterval
   // viene fortemente rallentato o sospeso quando la tab è in background o lo
@@ -18,10 +24,16 @@ export function RestTimer({ targetSeconds, exerciseName, onFinish }: RestTimerPr
   // — e soprattutto al rientro in foreground (`visibilitychange`) — permette
   // di recuperare suono e vibrazione subito quando l'utente torna sulla tab,
   // anche se il countdown sarebbe già scaduto nel frattempo.
-  const deadlineRef = useRef(Date.now() + targetSeconds * 1000)
+  const deadlineRef = useRef(deadline)
   onFinishRef.current = onFinish
 
   useEffect(() => {
+    if (expiredOnMount) {
+      finishedRef.current = true
+      onFinishRef.current()
+      return
+    }
+
     function tick() {
       if (finishedRef.current) return
       const secondsLeft = Math.ceil((deadlineRef.current - Date.now()) / 1000)
@@ -50,13 +62,15 @@ export function RestTimer({ targetSeconds, exerciseName, onFinish }: RestTimerPr
       clearInterval(interval)
       document.removeEventListener('visibilitychange', tick)
     }
-  }, [])
+  }, [expiredOnMount])
 
   function handleSkip() {
     finishedRef.current = true
     setRemaining(0)
     onFinishRef.current()
   }
+
+  if (expiredOnMount) return null
 
   const radius = 22
   const circumference = 2 * Math.PI * radius

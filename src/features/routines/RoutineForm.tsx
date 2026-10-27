@@ -75,7 +75,6 @@ export function RoutineForm({ uid, initialRoutine, onSave, onCancel }: RoutineFo
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <PageHeader
         title={initialRoutine ? 'Modifica routine' : 'Nuova routine'}
-        showLogout={false}
         actions={<IconButton icon="x" label="Annulla" onClick={onCancel} />}
       />
 

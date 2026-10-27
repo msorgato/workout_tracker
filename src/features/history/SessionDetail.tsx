@@ -10,7 +10,6 @@ export function SessionDetail({ session, onBack }: { session: Session; onBack: (
     <div className="flex flex-col gap-4">
       <PageHeader
         title={session.routineName ?? 'Sessione libera'}
-        showLogout={false}
         actions={<IconButton icon="chevron-left" label="Torna allo storico" onClick={onBack} />}
       />
       <p className="-mt-2 text-xs text-text-muted">

@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profilo utente</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap">
+<style>
+  :root {
+    --bg: #232f3e;
+    --card: #2d3a4b;
+    --border: #4a5666;
+    --text: #ffffff;
+    --text-muted: #dcdee0;
+    --accent: #39d353;
+    --ink: #000000;
+    --locked: #8a8f96;
+    --radius-card: 18px;
+    --radius-badge: 30%;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Montserrat, Arial, Helvetica, sans-serif;
+  }
+  .profile {
+    max-width: 430px;
+    margin: 0 auto;
+    padding: 28px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  /* Header */
+  .profile__header { display: flex; justify-content: space-between; align-items: center; }
+  .profile__title { margin: 0; font-size: 22px; font-weight: 800; }
+  .btn-outline {
+    height: 44px; padding: 0 18px;
+    border-radius: 22px; border: 1px solid var(--border);
+    background: transparent; color: var(--text);
+    font: 600 14px Montserrat, Arial, sans-serif; cursor: pointer;
+  }
+  .btn-outline:hover { border-color: var(--accent); }
+
+  /* Badge (icona su fondo verde) */
+  .badge {
+    display: grid; place-items: center; flex-shrink: 0;
+    border-radius: var(--radius-badge);
+    background: var(--accent);
+  }
+  .badge svg {
+    fill: none; stroke: var(--ink);
+    stroke-linecap: round; stroke-linejoin: round;
+  }
+  .badge--locked { background: transparent; box-shadow: inset 0 0 0 2px var(--border); }
+  .badge--locked svg { stroke: var(--locked); }
+
+  /* Identità */
+  .identity { display: flex; align-items: center; gap: 18px; }
+  .identity .badge { width: 104px; height: 104px; }
+  .identity .badge svg { width: 70px; height: 70px; stroke-width: 5; }
+  .identity__info { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .identity__name { font-size: 24px; font-weight: 800; line-height: 1.15; }
+  .identity__handle { font-size: 15px; color: var(--text-muted); }
+  .level-pill {
+    align-self: flex-start; margin-top: 4px; padding: 6px 12px;
+    border-radius: 999px; background: var(--accent); color: var(--ink);
+    font-size: 13px; font-weight: 700;
+  }
+
+  /* Statistiche */
+  .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .stat {
+    background: var(--card); border-radius: var(--radius-card);
+    padding: 14px 12px; display: flex; flex-direction: column; gap: 6px;
+  }
+  .stat svg {
+    width: 26px; height: 26px; fill: none; stroke: var(--accent);
+    stroke-width: 6; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .stat__value { font-size: 22px; font-weight: 800; }
+  .stat__label { font-size: 13px; color: var(--text-muted); }
+
+  /* Sezioni */
+  .section { display: flex; flex-direction: column; gap: 14px; }
+  .section__head { display: flex; justify-content: space-between; align-items: baseline; }
+  .section__title { margin: 0; font-size: 17px; font-weight: 800; }
+  .section__link { font-size: 14px; font-weight: 600; color: var(--accent); text-decoration: none; }
+  .section__link:hover { color: var(--text); }
+
+  /* Griglia badge */
+  .badges {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px; justify-items: center;
+  }
+  .badges .badge { width: 72px; height: 72px; }
+  .badges .badge svg { width: 48px; height: 48px; stroke-width: 5.2; }
+
+  /* Ultimi allenamenti */
+  .workouts { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+  .workout {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--card); border-radius: var(--radius-card); padding: 12px;
+  }
+  .workout .badge { width: 48px; height: 48px; }
+  .workout .badge svg { width: 32px; height: 32px; stroke-width: 5.5; }
+  .workout__info { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .workout__title { font-size: 15px; font-weight: 700; }
+  .workout__meta { font-size: 13px; color: var(--text-muted); }
+
+  @media (max-width: 360px) {
+    .badges .badge { width: 60px; height: 60px; }
+    .badges .badge svg { width: 40px; height: 40px; stroke-width: 5.6; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Libreria icone: griglia 64x64, tratto via CSS -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="i-muscle" viewBox="0 0 64 64"><path d="M44 58 H18 C11 58 7 53 9 46 L13 27 C10 19 14 10 22 9 C29 8 34 12 33 18 C33 22 30 25 27 26 L26 38 C31 30 44 28 50 36 C55 42 57 50 54 58 Z M30 47 C34 43 41 43 45 47 M46 12 L50 6 M52 20 L58 17"/></symbol>
+  <symbol id="i-dumbbell" viewBox="0 0 64 64"><path d="M23.3 37 L40.7 27 M9.9 29.7 L16.8 25.7 L29.8 48.3 L22.9 52.3 L9.9 29.7 Z M34.2 15.7 L41.1 11.7 L54.1 34.3 L47.2 38.3 L34.2 15.7 Z M6.8 38.4 L12.9 34.9 L19.9 47.1 L13.8 50.6 L6.8 38.4 Z M44.1 16.9 L50.2 13.4 L57.2 25.6 L51.1 29.1 L44.1 16.9 Z"/></symbol>
+  <symbol id="i-barbell" viewBox="0 0 64 64"><path d="M4 32 L12 32 M25 32 L39 32 M52 32 L60 32 M14.5 14 H16.5 a2.5 2.5 0 0 1 2.5 2.5 V47.5 a2.5 2.5 0 0 1 -2.5 2.5 H14.5 a2.5 2.5 0 0 1 -2.5 -2.5 V16.5 a2.5 2.5 0 0 1 2.5 -2.5 Z M21.5 20 H22.5 a2.5 2.5 0 0 1 2.5 2.5 V41.5 a2.5 2.5 0 0 1 -2.5 2.5 H21.5 a2.5 2.5 0 0 1 -2.5 -2.5 V22.5 a2.5 2.5 0 0 1 2.5 -2.5 Z M47.5 14 H49.5 a2.5 2.5 0 0 1 2.5 2.5 V47.5 a2.5 2.5 0 0 1 -2.5 2.5 H47.5 a2.5 2.5 0 0 1 -2.5 -2.5 V16.5 a2.5 2.5 0 0 1 2.5 -2.5 Z M41.5 20 H42.5 a2.5 2.5 0 0 1 2.5 2.5 V41.5 a2.5 2.5 0 0 1 -2.5 2.5 H41.5 a2.5 2.5 0 0 1 -2.5 -2.5 V22.5 a2.5 2.5 0 0 1 2.5 -2.5 Z"/></symbol>
+  <symbol id="i-kettlebell" viewBox="0 0 64 64"><path d="M23 24 V20 a9 9 0 0 1 18 0 V24 M19 24 H45 C55 30 57 45 51 56 H13 C7 45 9 30 19 24 Z M22 36 C22 32 25 30 28 30"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 64 64"><path d="M20 8 H44 V22 C44 31 39 37 32 37 C25 37 20 31 20 22 Z M20 13 H12 V17 C12 23 16 27 21 27 M44 13 H52 V17 C52 23 48 27 43 27 M32 37 L32 46 M20 57 H44 V52 C44 48 41 46 38 46 H26 C23 46 20 48 20 52 Z"/></symbol>
+  <symbol id="i-medal" viewBox="0 0 64 64"><path d="M20 4 L28 25 M44 4 L36 25 M16 41 a16 16 0 1 0 32 0 a16 16 0 1 0 -32 0 M32 32 L34.6 37.4 L40.6 38.2 L36.3 42.3 L37.3 48.2 L32 45.4 L26.7 48.2 L27.7 42.3 L23.4 38.2 L29.4 37.4 Z"/></symbol>
+  <symbol id="i-crown" viewBox="0 0 64 64"><path d="M8 20 L19 36 L32 14 L45 36 L56 20 L51 50 H13 Z M14 58 L50 58"/></symbol>
+  <symbol id="i-star" viewBox="0 0 64 64"><path d="M32 6 L39.6 21.5 L56.7 24 L44.4 36 L47.3 53 L32 45 L16.7 53 L19.6 36 L7.3 24 L24.4 21.5 Z"/></symbol>
+  <symbol id="i-flame" viewBox="0 0 64 64"><path d="M32 5 C38 15 50 22 48 38 C47 50 40 58 32 58 C24 58 16 51 16 40 C16 31 21 26 24 18 C28 23 28 27 30 30 C32 22 32 13 32 5 Z M32 36 C36 41 39 45 37 50 C36 53 34 55 32 55 C29 55 27 53 27 50 C27 45 30 41 32 36 Z"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 64 64"><path d="M37 4 L13 36 H30 L26 60 L51 26 H34 Z"/></symbol>
+  <symbol id="i-target" viewBox="0 0 64 64"><path d="M6 34 a24 24 0 1 0 48 0 a24 24 0 1 0 -48 0 M17 34 a13 13 0 1 0 26 0 a13 13 0 1 0 -26 0 M27 34 a3 3 0 1 0 6 0 a3 3 0 1 0 -6 0 M30 34 L52 12 M52 12 L52 5 M52 12 L59 12"/></symbol>
+  <symbol id="i-sneaker" viewBox="0 0 64 64"><path d="M6 46 V24 C6 21 8 19 11 19 H19 C21 26 28 30 36 31 L48 34 C55 36 59 41 59 46 Z M6 46 L6 52 L59 52 L59 46 M25 25 L29 21 M32 28 L36 24"/></symbol>
+</svg>
+
+<main class="profile">
+  <header class="profile__header">
+    <h1 class="profile__title">Profilo</h1>
+    <button type="button" class="btn-outline">Modifica</button>
+  </header>
+
+  <section class="identity" aria-label="Utente">
+    <div class="badge">
+      <svg role="img" aria-label="Avatar Muscolo"><use href="#i-muscle"/></svg>
+    </div>
+    <div class="identity__info">
+      <span class="identity__name">[Nome Utente]</span>
+      <span class="identity__handle">@[username]</span>
+      <span class="level-pill">Livello [N]</span>
+    </div>
+  </section>
+
+  <section class="stats" aria-label="Statistiche">
+    <div class="stat">
+      <svg aria-hidden="true"><use href="#i-dumbbell"/></svg>
+      <span class="stat__value">[N]</span>
+      <span class="stat__label">Workout</span>
+    </div>
+    <div class="stat">
+      <svg aria-hidden="true"><use href="#i-flame"/></svg>
+      <span class="stat__value">[N]</span>
+      <span class="stat__label">Giorni streak</span>
+    </div>
+    <div class="stat">
+      <svg aria-hidden="true"><use href="#i-trophy"/></svg>
+      <span class="stat__value">[N]</span>
+      <span class="stat__label">Record</span>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section__head">
+      <h2 class="section__title">Badge sbloccati</h2>
+      <a class="section__link" href="#">Vedi tutti</a>
+    </div>
+    <ul class="badges">
+      <li class="badge"><svg role="img" aria-label="Muscolo"><use href="#i-muscle"/></svg></li>
+      <li class="badge"><svg role="img" aria-label="Bilanciere"><use href="#i-barbell"/></svg></li>
+      <li class="badge"><svg role="img" aria-label="Kettlebell"><use href="#i-kettlebell"/></svg></li>
+      <li class="badge"><svg role="img" aria-label="Medaglia"><use href="#i-medal"/></svg></li>
+      <li class="badge"><svg role="img" aria-label="Corona"><use href="#i-crown"/></svg></li>
+      <li class="badge"><svg role="img" aria-label="Fulmine"><use href="#i-bolt"/></svg></li>
+      <li class="badge badge--locked"><svg role="img" aria-label="Stella, bloccato"><use href="#i-star"/></svg></li>
+      <li class="badge badge--locked"><svg role="img" aria-label="Obiettivo, bloccato"><use href="#i-target"/></svg></li>
+    </ul>
+  </section>
+
+  <section class="section">
+    <h2 class="section__title">Ultimi allenamenti</h2>
+    <ul class="workouts">
+      <li class="workout">
+        <div class="badge"><svg aria-hidden="true"><use href="#i-dumbbell"/></svg></div>
+        <div class="workout__info">
+          <span class="workout__title">[Scheda forza]</span>
+          <span class="workout__meta">[data] · [durata]</span>
+        </div>
+      </li>
+      <li class="workout">
+        <div class="badge"><svg aria-hidden="true"><use href="#i-sneaker"/></svg></div>
+        <div class="workout__info">
+          <span class="workout__title">[Sessione cardio]</span>
+          <span class="workout__meta">[data] · [durata]</span>
+        </div>
+      </li>
+    </ul>
+  </section>
+</main>
+
+</body>
+</html>

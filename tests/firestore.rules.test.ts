@@ -73,4 +73,19 @@ describe('users/{uid}/** security rules', () => {
     await assertFails(testEnv.authenticatedContext(OTHER_UID).firestore().doc(tipsPath).set(tips))
     await assertFails(testEnv.unauthenticatedContext().firestore().doc(tipsPath).get())
   })
+
+  it('scopes the profile document to its owner', async () => {
+    const profilePath = `users/${OWNER_UID}/profile/main`
+    const profile = { avatarId: 'trophy' }
+
+    await assertSucceeds(
+      testEnv.authenticatedContext(OWNER_UID).firestore().doc(profilePath).set(profile),
+    )
+    await assertSucceeds(testEnv.authenticatedContext(OWNER_UID).firestore().doc(profilePath).get())
+    await assertFails(testEnv.authenticatedContext(OTHER_UID).firestore().doc(profilePath).get())
+    await assertFails(
+      testEnv.authenticatedContext(OTHER_UID).firestore().doc(profilePath).set(profile),
+    )
+    await assertFails(testEnv.unauthenticatedContext().firestore().doc(profilePath).get())
+  })
 })
