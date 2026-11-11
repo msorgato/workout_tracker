@@ -10,6 +10,7 @@ const PATHS = {
   pencil: 'M17 3l4 4L8 20l-5 1 1-5z',
   trash: 'M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6',
   upload: 'M12 16V4M7 9l5-5 5 5M4 20h16',
+  download: 'M12 4v12M7 11l5 5 5-5M4 20h16',
   'log-out': 'M9 21H5V3h4M16 17l5-5-5-5M21 12H9',
   'chevron-left': 'M15 5l-7 7 7 7',
   check: 'M4 12.5l5 5L20 6.5',

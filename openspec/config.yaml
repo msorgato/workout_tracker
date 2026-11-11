@@ -19,7 +19,8 @@ context: |
 
   Scope/constraints:
   - Single user (owner-only Google login), no multi-tenant logic.
-  - Online-only, responsive web (mobile + desktop). No PWA/offline in this version.
+  - Online-only, responsive web (mobile + desktop), installable as a PWA on Android
+    (manifest only: no service worker cache, no offline).
   - Historical log only — no charts, 1RM estimation, auto PRs, or progression suggestions
     (deferred to a future version).
   - No user photo/image uploads (would require Cloud Storage, unavailable on Spark plan).
@@ -47,7 +48,7 @@ context: |
 
   Out of scope for now (possible future versions):
   - Multi-user / data sharing.
-  - Offline mode / installable PWA.
+  - Offline mode (service worker cache, Firestore offline persistence).
   - Charts, statistics, 1RM estimation, auto PRs, load progression suggestions.
   - User photo/image upload (requires Cloud Storage for Firebase → Blaze plan).
 
