@@ -3,27 +3,49 @@ import { Card } from '../../components/ui/Card'
 import { Icon } from '../../components/ui/Icon'
 import { disable, enable, isEnabled, notificationsSupported } from './restNotifications'
 
+const SLOW_PROMPT_MS = 4000
+
+const PERMISSION_LABEL: Record<NotificationPermission, string> = {
+  default: 'non ancora richiesto',
+  granted: 'concesso',
+  denied: 'bloccato',
+}
+
 /** Interruttore "Notifiche di fine recupero" del Profilo; non compare se il browser non le supporta. */
 export function RestNotificationsToggle() {
   const [checked, setChecked] = useState(() => isEnabled())
+  const [busy, setBusy] = useState(false)
+  const [slow, setSlow] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
 
   if (!notificationsSupported()) return null
 
   async function handleToggle() {
+    if (busy) return
     setMessage(null)
     if (checked) {
       disable()
       setChecked(false)
       return
     }
-    const result = await enable()
-    if (result === 'enabled') {
-      setChecked(true)
-    } else if (result === 'blocked') {
-      setMessage('Notifiche bloccate: riattivale dalle impostazioni del sito nel browser.')
-    } else {
-      setMessage('Notifiche non autorizzate.')
+
+    setBusy(true)
+    const slowTimer = setTimeout(() => setSlow(true), SLOW_PROMPT_MS)
+    try {
+      const result = await enable()
+      if (result === 'enabled') {
+        setChecked(true)
+      } else if (result === 'blocked') {
+        setMessage('Notifiche bloccate: riattivale dalle impostazioni del sito nel browser.')
+      } else {
+        setMessage('Notifiche non autorizzate.')
+      }
+    } catch {
+      setMessage('Impossibile attivare le notifiche su questo dispositivo.')
+    } finally {
+      clearTimeout(slowTimer)
+      setSlow(false)
+      setBusy(false)
     }
   }
 
@@ -41,9 +63,10 @@ export function RestNotificationsToggle() {
           type="button"
           role="switch"
           aria-checked={checked}
+          aria-busy={busy}
           aria-label="Notifiche di fine recupero"
           onClick={handleToggle}
-          className="flex h-11 w-14 shrink-0 items-center justify-center"
+          className={`flex h-11 w-14 shrink-0 items-center justify-center ${busy ? 'opacity-60' : ''}`}
         >
           <span
             className={`relative h-7 w-12 rounded-full border border-border transition-colors ${
@@ -58,6 +81,15 @@ export function RestNotificationsToggle() {
           </span>
         </button>
       </div>
+      <p className="text-xs text-text-muted">
+        {busy ? 'In attesa del permesso…' : `Permesso del browser: ${PERMISSION_LABEL[Notification.permission]}`}
+      </p>
+      {slow && (
+        <p role="status" className="text-sm text-text-muted">
+          Nessuna richiesta? Controlla che le notifiche di «Workout» siano consentite nelle
+          impostazioni di Android (Impostazioni → App → Workout → Notifiche).
+        </p>
+      )}
       {message && (
         <p role="alert" className="text-sm text-danger">
           {message}
