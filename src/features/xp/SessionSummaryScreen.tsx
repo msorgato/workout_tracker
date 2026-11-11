@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
 import { LevelUpBanner } from './LevelUpBanner'
@@ -25,9 +25,12 @@ function reducedMotion() {
 export function SessionSummaryScreen({
   summary,
   onClose,
+  actions,
 }: {
   summary: SessionSummaryData
   onClose: () => void
+  /** Azioni aggiuntive mostrate tra le statistiche e il pulsante di chiusura. */
+  actions?: ReactNode
 }) {
   const xp = useCountUp(summary.xpGained)
   const hasLevel = summary.before !== null && summary.after !== null
@@ -106,6 +109,8 @@ export function SessionSummaryScreen({
           <p className="text-xs text-text-muted">volume</p>
         </div>
       </Card>
+
+      {actions}
 
       <Button variant="primary" size="lg" fullWidth onClick={onClose}>
         Vai allo storico

@@ -3,6 +3,7 @@ import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { useAuth } from '../auth/AuthContext'
+import { useInstallPrompt } from '../install/useInstallPrompt'
 import { XpBar } from '../xp/XpBar'
 import { AvatarBadge } from './AvatarBadge'
 import { AvatarPicker } from './AvatarPicker'
@@ -12,6 +13,7 @@ import { useXpSummary } from './useXpSummary'
 export function ProfilePage({ uid }: { uid: string }) {
   const { user, logout } = useAuth()
   const profile = useProfile()
+  const { canInstall, install } = useInstallPrompt()
   const xpSummary = useXpSummary(uid)
   const [editing, setEditing] = useState(false)
 
@@ -86,6 +88,12 @@ export function ProfilePage({ uid }: { uid: string }) {
           </>
         )}
       </Card>
+
+      {canInstall && (
+        <Button icon="download" fullWidth onClick={install}>
+          Installa app
+        </Button>
+      )}
 
       <Button icon="log-out" fullWidth onClick={logout}>
         Esci
