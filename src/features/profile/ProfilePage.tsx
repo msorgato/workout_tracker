@@ -4,6 +4,7 @@ import { Card } from '../../components/ui/Card'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { useAuth } from '../auth/AuthContext'
 import { useInstallPrompt } from '../install/useInstallPrompt'
+import { RestNotificationsToggle } from '../rest-timer/RestNotificationsToggle'
 import { XpBar } from '../xp/XpBar'
 import { AvatarBadge } from './AvatarBadge'
 import { AvatarPicker } from './AvatarPicker'
@@ -88,6 +89,8 @@ export function ProfilePage({ uid }: { uid: string }) {
           </>
         )}
       </Card>
+
+      <RestNotificationsToggle />
 
       {canInstall && (
         <Button icon="download" fullWidth onClick={install}>

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import { useAuth } from './features/auth/AuthContext'
 import { TabBar } from './components/ui/TabBar'
@@ -13,6 +14,19 @@ function AppRoutes() {
   const { user } = useAuth()
   const navigate = useNavigate()
   const uid = user!.uid
+
+  // Il tocco su una notifica porta in primo piano l'app: il service worker chiede di navigare.
+  useEffect(() => {
+    if (!('serviceWorker' in navigator)) return
+    function onMessage(event: MessageEvent) {
+      const data = event.data as { type?: string; url?: unknown } | null
+      if (data?.type === 'navigate' && typeof data.url === 'string' && data.url.startsWith('/')) {
+        navigate(data.url)
+      }
+    }
+    navigator.serviceWorker.addEventListener('message', onMessage)
+    return () => navigator.serviceWorker.removeEventListener('message', onMessage)
+  }, [navigate])
 
   return (
     <Routes>

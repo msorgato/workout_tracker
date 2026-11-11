@@ -1,5 +1,6 @@
 import { createContext, useContext, type ReactNode } from 'react'
 import { useAuth } from '../auth/AuthContext'
+import { useRestNotification } from '../rest-timer/useRestNotification'
 import { useActiveSession } from './useActiveSession'
 import { useSessionDraft } from './useSessionDraft'
 
@@ -12,6 +13,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth()
   const active = useActiveSession(user?.uid)
   const draft = useSessionDraft(active.session?.id)
+  const { restFor } = draft
+  useRestNotification(
+    restFor?.deadline,
+    restFor ? active.session?.exercises[restFor.exerciseIndex]?.exerciseName : undefined,
+  )
 
   return <SessionContext.Provider value={{ ...active, ...draft }}>{children}</SessionContext.Provider>
 }
