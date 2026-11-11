@@ -9,17 +9,23 @@ import { inputClass } from '../../components/ui/fields'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { Stepper } from '../../components/ui/Stepper'
 import { parseDecimal } from '../../lib/numberInput'
+import type { Session } from '../../lib/types'
 import { TipsPanel } from '../exercise-tips/TipsPanel'
 import { useExerciseTips } from '../exercise-tips/useExerciseTips'
 import { RestTimer } from '../rest-timer/RestTimer'
+import { RoutineForm } from '../routines/RoutineForm'
+import { createRoutine } from '../routines/routinesApi'
 import { summarizeSession } from '../history/sessionSummary'
 import { SessionSummaryScreen, type SessionSummaryData } from '../xp/SessionSummaryScreen'
 import { XP_EXERCISE_BONUS, XP_PER_SET, sessionXp, totalXp } from '../xp/xp'
 import { XpChip } from '../xp/XpChip'
 import { XpPop } from '../xp/XpPop'
 import { useSession } from './SessionContext'
+import { SaveAsRoutineCard } from './SaveAsRoutineCard'
 import { listCompletedSessions } from './sessionsApi'
 import { getSetProgress } from './setProgress'
+import { routineDraftFromSession } from './sessionToRoutine'
+import { UpdateRoutineCard } from './UpdateRoutineCard'
 
 interface ActiveSessionPageProps {
   uid: string
@@ -60,6 +66,9 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
   const popIdRef = useRef(0)
   const [finishing, setFinishing] = useState(false)
   const [summary, setSummary] = useState<SessionSummaryData>()
+  // Sessione appena conclusa: serve al riepilogo per proporre la routine.
+  const [finishedSession, setFinishedSession] = useState<Session>()
+  const [creatingRoutine, setCreatingRoutine] = useState(false)
 
   const timerVisible = restFor !== null
   useEffect(() => {
@@ -71,7 +80,29 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
   }, [timerVisible])
 
   if (summary) {
-    return <SessionSummaryScreen summary={summary} onClose={onDone} />
+    if (creatingRoutine && finishedSession) {
+      return (
+        <RoutineForm
+          uid={uid}
+          title="Nuova routine"
+          initialValues={{ name: '', exercises: routineDraftFromSession(finishedSession) }}
+          onSave={async (input) => {
+            await createRoutine(uid, input)
+            navigate('/routines')
+          }}
+          onCancel={() => setCreatingRoutine(false)}
+        />
+      )
+    }
+
+    let actions = null
+    if (finishedSession?.routineId) {
+      actions = <UpdateRoutineCard uid={uid} session={finishedSession} />
+    } else if (finishedSession && routineDraftFromSession(finishedSession).length > 0) {
+      actions = <SaveAsRoutineCard onSave={() => setCreatingRoutine(true)} />
+    }
+
+    return <SessionSummaryScreen summary={summary} onClose={onDone} actions={actions} />
   }
 
   if (!session) {
@@ -139,6 +170,7 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
       throw error
     }
     setRestFor(null)
+    setFinishedSession(snapshot)
     const xpGained = sessionXp(snapshot, { concluded: true })
     const stats = summarizeSession(snapshot)
     setSummary({
@@ -156,7 +188,7 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
     <div className="flex flex-col gap-4">
       <PageHeader
         title={session.routineName ?? 'Sessione libera'}
-        actions={
+        toolbar={
           <>
             <XpChip xp={sessionXp(session, { concluded: false })} />
             <Button variant="secondary" onClick={handleFinish} disabled={finishing}>

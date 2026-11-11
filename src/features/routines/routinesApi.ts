@@ -3,6 +3,8 @@ import {
   collection,
   deleteDoc,
   doc,
+  type DocumentData,
+  getDoc,
   getDocs,
   orderBy,
   query,
@@ -17,20 +19,26 @@ function routinesCollection(uid: string) {
   return collection(db, 'users', uid, 'routines')
 }
 
+function routineFromDoc(id: string, data: DocumentData): Routine {
+  return {
+    id,
+    name: data.name as string,
+    exercises: data.exercises ?? [],
+    createdAt: (data.createdAt as Timestamp | undefined)?.toMillis() ?? Date.now(),
+    updatedAt: (data.updatedAt as Timestamp | undefined)?.toMillis() ?? Date.now(),
+  }
+}
+
 export async function listRoutines(uid: string): Promise<Routine[]> {
   const q = query(routinesCollection(uid), orderBy('createdAt', 'desc'))
   const snapshot = await getDocs(q)
 
-  return snapshot.docs.map((docSnap) => {
-    const data = docSnap.data()
-    return {
-      id: docSnap.id,
-      name: data.name as string,
-      exercises: data.exercises ?? [],
-      createdAt: (data.createdAt as Timestamp | undefined)?.toMillis() ?? Date.now(),
-      updatedAt: (data.updatedAt as Timestamp | undefined)?.toMillis() ?? Date.now(),
-    }
-  })
+  return snapshot.docs.map((docSnap) => routineFromDoc(docSnap.id, docSnap.data()))
+}
+
+export async function getRoutine(uid: string, routineId: string): Promise<Routine | null> {
+  const snapshot = await getDoc(doc(db, 'users', uid, 'routines', routineId))
+  return snapshot.exists() ? routineFromDoc(snapshot.id, snapshot.data()) : null
 }
 
 export async function createRoutine(uid: string, input: RoutineInput): Promise<Routine> {

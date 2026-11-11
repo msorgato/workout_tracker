@@ -9,15 +9,28 @@ import type { Routine, RoutineExercise, RoutineInput } from '../../lib/types'
 interface RoutineFormProps {
   uid: string | undefined
   initialRoutine?: Routine
+  /** Valori di partenza per una nuova routine (es. ricavati da una sessione libera). */
+  initialValues?: RoutineInput
+  title?: string
   onSave: (input: RoutineInput) => Promise<void>
   onCancel: () => void
 }
 
-export function RoutineForm({ uid, initialRoutine, onSave, onCancel }: RoutineFormProps) {
-  const [name, setName] = useState(initialRoutine?.name ?? '')
-  const [exercises, setExercises] = useState<RoutineExercise[]>(initialRoutine?.exercises ?? [])
+export function RoutineForm({
+  uid,
+  initialRoutine,
+  initialValues,
+  title,
+  onSave,
+  onCancel,
+}: RoutineFormProps) {
+  const [name, setName] = useState(initialRoutine?.name ?? initialValues?.name ?? '')
+  const [exercises, setExercises] = useState<RoutineExercise[]>(
+    initialRoutine?.exercises ?? initialValues?.exercises ?? [],
+  )
   const [nameError, setNameError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   function addExercise(exercise: { id: string; name: string }) {
     setExercises((current) => [
@@ -63,9 +76,12 @@ export function RoutineForm({ uid, initialRoutine, onSave, onCancel }: RoutineFo
       return
     }
     setNameError(null)
+    setSaveError(null)
     setSaving(true)
     try {
       await onSave({ name: trimmedName, exercises })
+    } catch {
+      setSaveError('Salvataggio non riuscito. Riprova.')
     } finally {
       setSaving(false)
     }
@@ -74,7 +90,7 @@ export function RoutineForm({ uid, initialRoutine, onSave, onCancel }: RoutineFo
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <PageHeader
-        title={initialRoutine ? 'Modifica routine' : 'Nuova routine'}
+        title={title ?? (initialRoutine ? 'Modifica routine' : 'Nuova routine')}
         actions={<IconButton icon="x" label="Annulla" onClick={onCancel} />}
       />
 
@@ -164,6 +180,12 @@ export function RoutineForm({ uid, initialRoutine, onSave, onCancel }: RoutineFo
           </li>
         ))}
       </ul>
+
+      {saveError && (
+        <p role="alert" className="text-sm text-danger">
+          {saveError}
+        </p>
+      )}
 
       <div className="flex gap-2">
         <Button type="submit" variant="primary" size="lg" fullWidth disabled={saving}>
