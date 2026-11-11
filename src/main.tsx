@@ -10,6 +10,15 @@ import '@fontsource/barlow-condensed/latin-700.css'
 import '@fontsource-variable/inter/wght.css'
 import './index.css'
 
+// Service worker minimo (solo notifiche, nessuna cache): in produzione, dopo il caricamento.
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {
+      // Senza service worker l'app funziona uguale, solo senza notifiche di sistema.
+    })
+  })
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>

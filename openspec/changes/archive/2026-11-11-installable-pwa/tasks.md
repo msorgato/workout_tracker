@@ -15,4 +15,4 @@
 ## 4. Verifica
 
 - [x] 4.1 Verificare che `npm run build`, `npm run lint` e `npm run test:unit` passino e che le modifiche siano limitate a `public/`, `index.html`, `src/features/install/`, `src/main.tsx`, `ProfilePage.tsx` e `openspec/config.yaml`
-- [ ] 4.2 Prova sul telefono Android con il deploy di anteprima della PR (HTTPS): installazione dal pulsante del Profilo e dal menu di Chrome, icona adattiva senza bordi bianchi, avvio a tutto schermo su Routine con header e tab bar visibili, accesso Google dall'app installata (se non funziona: applicare il ripiego del design, punto 5, insieme all'utente), riapertura ancora autenticati, nuovo rilascio visibile alla riapertura senza reinstallare
+- [x] 4.2 Prova sul telefono Android con il deploy di anteprima della PR (HTTPS): installazione dal pulsante del Profilo e dal menu di Chrome, icona adattiva senza bordi bianchi, avvio a tutto schermo su Routine con header e tab bar visibili, accesso Google dall'app installata (se non funziona: applicare il ripiego del design, punto 5, insieme all'utente), riapertura ancora autenticati, nuovo rilascio visibile alla riapertura senza reinstallare

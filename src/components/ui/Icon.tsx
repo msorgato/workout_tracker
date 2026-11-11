@@ -11,6 +11,7 @@ const PATHS = {
   trash: 'M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6',
   upload: 'M12 16V4M7 9l5-5 5 5M4 20h16',
   download: 'M12 4v12M7 11l5 5 5-5M4 20h16',
+  bell: 'M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0',
   'log-out': 'M9 21H5V3h4M16 17l5-5-5-5M21 12H9',
   'chevron-left': 'M15 5l-7 7 7 7',
   check: 'M4 12.5l5 5L20 6.5',
