@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { Routine, Session, SessionExercise } from '../../lib/types'
+import type { Routine, Session, SessionExercise, SessionSet } from '../../lib/types'
+import { insertSet, removeSet as removeSetFrom, updateSet as updateSetIn } from './editSets'
+import type { SetValues } from './editSets'
 import {
   createFreeSession,
   createSessionFromRoutine,
@@ -94,6 +96,38 @@ export function useActiveSession(uid: string | undefined) {
     [uid, session],
   )
 
+  // Modifica, eliminazione e ripristino di una serie: stesso schema di `completeSet`
+  // (aggiornamento locale subito, riscrittura immediata dell'array `exercises`).
+  const changeExercise = useCallback(
+    async (exerciseIndex: number, change: (exercise: SessionExercise) => SessionExercise) => {
+      if (!uid || !session) return
+      const nextExercises = session.exercises.map((exercise, index) =>
+        index === exerciseIndex ? change(exercise) : exercise,
+      )
+      setSession({ ...session, exercises: nextExercises })
+      await saveSessionExercises(uid, session.id, nextExercises)
+    },
+    [uid, session],
+  )
+
+  const updateSet = useCallback(
+    (exerciseIndex: number, setIndex: number, values: SetValues) =>
+      changeExercise(exerciseIndex, (exercise) => updateSetIn(exercise, setIndex, values)),
+    [changeExercise],
+  )
+
+  const removeSet = useCallback(
+    (exerciseIndex: number, setIndex: number) =>
+      changeExercise(exerciseIndex, (exercise) => removeSetFrom(exercise, setIndex)),
+    [changeExercise],
+  )
+
+  const restoreSet = useCallback(
+    (exerciseIndex: number, setIndex: number, set: SessionSet) =>
+      changeExercise(exerciseIndex, (exercise) => insertSet(exercise, setIndex, set)),
+    [changeExercise],
+  )
+
   const updateExerciseRestSeconds = useCallback(
     async (exerciseIndex: number, targetRestSeconds: number) => {
       if (!uid || !session) return
@@ -128,6 +162,9 @@ export function useActiveSession(uid: string | undefined) {
     startFree,
     addExercise,
     completeSet,
+    updateSet,
+    removeSet,
+    restoreSet,
     updateExerciseRestSeconds,
     updateNotes,
     finishSession,
