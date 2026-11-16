@@ -9,7 +9,7 @@ import { inputClass } from '../../components/ui/fields'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { Stepper } from '../../components/ui/Stepper'
 import { parseDecimal } from '../../lib/numberInput'
-import type { Session } from '../../lib/types'
+import type { Session, SessionSet } from '../../lib/types'
 import { TipsPanel } from '../exercise-tips/TipsPanel'
 import { useExerciseTips } from '../exercise-tips/useExerciseTips'
 import { RestTimer } from '../rest-timer/RestTimer'
@@ -21,8 +21,10 @@ import { XP_EXERCISE_BONUS, XP_PER_SET, sessionXp, totalXp } from '../xp/xp'
 import { XpChip } from '../xp/XpChip'
 import { XpPop } from '../xp/XpPop'
 import { useSession } from './SessionContext'
+import type { SetValues } from './editSets'
 import { SaveAsRoutineCard } from './SaveAsRoutineCard'
 import { listCompletedSessions } from './sessionsApi'
+import { SetRow } from './SetRow'
 import { getSetProgress } from './setProgress'
 import { routineDraftFromSession } from './sessionToRoutine'
 import { UpdateRoutineCard } from './UpdateRoutineCard'
@@ -35,6 +37,8 @@ interface ActiveSessionPageProps {
 const DEFAULT_REST_SECONDS = 90
 const WEIGHT_STEP = 2.5
 const REPS_STEP = 1
+// Tempo in cui una serie appena eliminata si può ripristinare.
+const UNDO_DELETE_MS = 5000
 // Spazio riservato in fondo alla pagina per il timer ancorato sopra la tab bar.
 const TIMER_DOCK_HEIGHT = '6rem'
 
@@ -44,6 +48,9 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
     startFree,
     addExercise,
     completeSet,
+    updateSet,
+    removeSet,
+    restoreSet,
     updateExerciseRestSeconds,
     updateNotes,
     finishSession,
@@ -69,6 +76,15 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
   // Sessione appena conclusa: serve al riepilogo per proporre la routine.
   const [finishedSession, setFinishedSession] = useState<Session>()
   const [creatingRoutine, setCreatingRoutine] = useState(false)
+  // Serie in modifica (una sola alla volta) e ultima serie eliminata, ripristinabile per qualche secondo.
+  const [editing, setEditing] = useState<{ exerciseIndex: number; setIndex: number } | null>(null)
+  const [undo, setUndo] = useState<{
+    exerciseIndex: number
+    setIndex: number
+    set: SessionSet
+  } | null>(null)
+  const undoTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  useEffect(() => () => clearTimeout(undoTimerRef.current), [])
 
   const timerVisible = restFor !== null
   useEffect(() => {
@@ -145,6 +161,36 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
     setPops((current) => [...current, ...newPops])
     setLastAddedSet({ exerciseIndex, setNumber: exercise.sets.length + 1 })
     setTimeout(() => setLastAddedSet(undefined), 1000)
+  }
+
+  async function handleSaveSet(exerciseIndex: number, setIndex: number, values: SetValues) {
+    const setNumber = session!.exercises[exerciseIndex].sets[setIndex].setNumber
+    setEditing(null)
+    await updateSet(exerciseIndex, setIndex, values)
+    setLastAddedSet({ exerciseIndex, setNumber })
+    setTimeout(() => setLastAddedSet(undefined), 1000)
+  }
+
+  async function handleDeleteSet(exerciseIndex: number, setIndex: number) {
+    const exercise = session!.exercises[exerciseIndex]
+    const removed = exercise.sets[setIndex]
+    if (!removed) return
+    const wasLast = setIndex === exercise.sets.length - 1
+    setEditing(null)
+    // Senza la serie che l'aveva avviato, il recupero di quell'esercizio non ha più senso.
+    if (wasLast && restFor?.exerciseIndex === exerciseIndex) setRestFor(null)
+    clearTimeout(undoTimerRef.current)
+    setUndo({ exerciseIndex, setIndex, set: removed })
+    undoTimerRef.current = setTimeout(() => setUndo(null), UNDO_DELETE_MS)
+    await removeSet(exerciseIndex, setIndex)
+  }
+
+  async function handleUndoDelete() {
+    if (!undo) return
+    const { exerciseIndex, setIndex, set } = undo
+    clearTimeout(undoTimerRef.current)
+    setUndo(null)
+    await restoreSet(exerciseIndex, setIndex, set)
   }
 
   function removePop(id: number) {
@@ -247,34 +293,38 @@ export function ActiveSessionPage({ uid, onDone }: ActiveSessionPageProps) {
                 />
 
                 {exercise.sets.length > 0 && (
-                  <ul className="flex flex-col gap-1">
-                    {exercise.sets.map((set, setIndex) => (
-                      <li
-                        key={set.setNumber}
-                        className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm ${
-                          setIndex === exercise.sets.length - 1
-                            ? 'bg-accent/10 text-text'
-                            : 'bg-surface text-text-muted'
-                        } ${
-                          lastAddedSet?.exerciseIndex === index &&
-                          lastAddedSet.setNumber === set.setNumber
-                            ? 'animate-row-flash'
-                            : ''
-                        }`}
-                      >
-                        <span className="w-6 font-display text-lg font-bold tabular-nums text-accent">
-                          {set.setNumber}
-                        </span>
-                        <span className="flex-1 tabular-nums">{set.weight} kg</span>
-                        <span className="tabular-nums">× {set.reps} reps</span>
-                        {progress.target !== undefined && set.setNumber > progress.target && (
-                          <span className="rounded-full bg-surface-raised px-2 py-0.5 text-xs text-text-muted">
-                            extra
-                          </span>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="flex flex-col gap-1">
+                    <ul className="flex flex-col gap-1">
+                      {exercise.sets.map((set, setIndex) => (
+                        <SetRow
+                          key={set.setNumber}
+                          set={set}
+                          isLast={setIndex === exercise.sets.length - 1}
+                          isExtra={progress.target !== undefined && set.setNumber > progress.target}
+                          flash={
+                            lastAddedSet?.exerciseIndex === index &&
+                            lastAddedSet.setNumber === set.setNumber
+                          }
+                          editing={editing?.exerciseIndex === index && editing.setIndex === setIndex}
+                          onStartEdit={() => setEditing({ exerciseIndex: index, setIndex })}
+                          onSave={(values) => handleSaveSet(index, setIndex, values)}
+                          onCancel={() => setEditing(null)}
+                          onDelete={() => handleDeleteSet(index, setIndex)}
+                        />
+                      ))}
+                    </ul>
+                    <p className="text-xs text-text-muted">Tocca una serie per modificarla.</p>
+                  </div>
+                )}
+
+                {undo?.exerciseIndex === index && (
+                  <div
+                    role="status"
+                    className="flex items-center justify-between gap-3 rounded-lg bg-surface px-3 py-1 text-sm text-text-muted"
+                  >
+                    <span>Serie {undo.set.setNumber} eliminata</span>
+                    <Button onClick={handleUndoDelete}>Annulla</Button>
+                  </div>
                 )}
 
                 {!progress.canLogSet ? (
